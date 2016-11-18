@@ -80,16 +80,16 @@ RUN echo 'export PATH=$PATH:/usr/local/lib/postgres-xl/bin' >> .bashrc
 
 USER root
 
-COPY postgres-xl/init-ssh.sh .
+COPY postgres-xl/init.sh .
 
-RUN chown postgres-xl:postgres-xl init-*.sh
+RUN chown postgres-xl:postgres-xl init.sh
 
 VOLUME \
     /var/lib/postgres-xl \
     /var/lib/postgres-xl/.ssh
 
-COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisor/supervisord.conf /etc/supervisord.d/supervisord.conf
 
 WORKDIR /
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.d/supervisord.conf"]
