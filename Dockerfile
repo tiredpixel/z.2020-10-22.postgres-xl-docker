@@ -2,37 +2,15 @@ FROM centos:7
 
 MAINTAINER tiredpixel <tiredpixel@posteo.de>
 
-ENV GOSU_VERSION 1.9
-ENV GOSU_ARCH amd64
-RUN set -x \
+RUN yum -y install \
+        epel-release \
     && \
-    curl -SL -o /usr/local/bin/gosu \
-        "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$GOSU_ARCH" \
-    && \
-    curl -SL -o /usr/local/bin/gosu.asc \
-        "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$GOSU_ARCH.asc" \
-    && \
-    export GNUPGHOME="$(mktemp -d)" \
-    && \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys \
-        B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && \
-    gpg --batch --verify \
-        /usr/local/bin/gosu.asc \
-        /usr/local/bin/gosu \
-    && \
-    rm -r \
-        "$GNUPGHOME" \
-        /usr/local/bin/gosu.asc \
-    && \
-    chmod +x \
-        /usr/local/bin/gosu \
-    && \
-    gosu nobody true
+    yum clean all
 
 RUN yum -y install \
         git \
         openssh-server \
+        supervisor \
     && \
     yum clean all
 
@@ -57,27 +35,28 @@ RUN useradd postgres-xl \
         -d /var/lib/postgres-xl
 
 RUN mkdir -p \
-        /usr/local/src/postgres-xl/src \
+        /usr/local/lib/postgres-xl \
+        /usr/local/src/postgres-xl \
         /var/lib/postgres-xl \
+        /var/lib/postgres-xl/.ssh \
     && \
     chown -R postgres-xl:postgres-xl \
-        /usr/local/src/postgres-xl/src \
-        /var/lib/postgres-xl
-
-VOLUME /var/lib/postgres-xl
+        /usr/local/lib/postgres-xl \
+        /usr/local/src/postgres-xl \
+        /var/lib/postgres-xl \
+        /var/lib/postgres-xl/.ssh
 
 USER postgres-xl
 
 RUN git clone \
         -b XL9_5_STABLE \
         git://git.postgresql.org/git/postgres-xl.git \
-        /usr/local/src/postgres-xl/src
+        /usr/local/src/postgres-xl
 
-WORKDIR /usr/local/src/postgres-xl/src
+WORKDIR /usr/local/src/postgres-xl
 
 RUN ./configure \
-        --prefix /usr/local/src/postgres-xl \
-        --bindir /usr/local/bin \
+        --prefix /usr/local/lib/postgres-xl \
     && \
     make \
     && \
@@ -93,10 +72,24 @@ RUN make install \
     && \
     make install
 
-COPY docker-entrypoint.sh /usr/local/bin/
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["bash"]
+USER postgres-xl
 
 WORKDIR /var/lib/postgres-xl
+
+RUN echo 'export PATH=$PATH:/usr/local/lib/postgres-xl/bin' >> .bashrc
+
+USER root
+
+COPY postgres-xl/init-ssh.sh .
+
+RUN chown postgres-xl:postgres-xl init-*.sh
+
+VOLUME \
+    /var/lib/postgres-xl \
+    /var/lib/postgres-xl/.ssh
+
+COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+WORKDIR /
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
