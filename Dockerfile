@@ -85,11 +85,10 @@ COPY postgres-xl/init.sh .
 RUN chown postgres-xl:postgres-xl init.sh
 
 VOLUME \
+    /etc/ssh \
     /var/lib/postgres-xl \
     /var/lib/postgres-xl/.ssh
 
 COPY supervisor/supervisord.conf /etc/supervisord.d/supervisord.conf
-
-WORKDIR /
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.d/supervisord.conf"]
