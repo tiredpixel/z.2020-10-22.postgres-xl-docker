@@ -22,9 +22,9 @@ touch \
 if [ -n "$pg_subnet" ]
 then
     cat <<EOF >> pgxc_ctl/pgxc_ctl.conf
-###
+
 coordPgHbaEntries=($pg_subnet)
 datanodePgHbaEntries=($pg_subnet)
-###
+
 EOF
 fi

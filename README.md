@@ -74,7 +74,7 @@ Control container must be able to reach every node without a password.
 ```bash
 pg_subnet=$(docker network inspect -f '{{range .IPAM.Config}}{{.Subnet}}{{end}}' $pg_cluster | tr -d '\n')
 
-docker exec -u $pg_user $(docker ps -q -f name=$pg_cluster-ctl) $pg_data/init.sh $pg_subnet
+docker exec -it -u $pg_user $(docker ps -q -f name=$pg_cluster-ctl) $pg_data/init.sh $pg_subnet
 ```
 
 
