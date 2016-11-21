@@ -61,7 +61,7 @@ RUN yum -y install \
         rm -rf $TMP_PG \
     ' \
     && \
-    yum -y remove \
+    yum -y autoremove \
         automake \
         bison \
         flex \
@@ -82,7 +82,7 @@ RUN yum -y install \
         openssh-server \
         supervisor \
     && \
-    yum -y remove \
+    yum -y autoremove \
         epel-release \
     && \
     yum clean all
