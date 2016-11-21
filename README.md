@@ -49,7 +49,7 @@ docker network create \
 Create a Control container, with write-access to the SSH volume:
 
 ```bash
-pg_image=postgres-xl:latest
+pg_image=tiredpixel/postgres-xl
 pg_data=/var/lib/postgres
 pg_user=postgres
 pg_cluster=postgresql-1
@@ -69,7 +69,7 @@ you'd like to allow all users on that network to connect to any database (!).
 If you're using multiple Swarm nodes and not using Flocker or similar, you'll
 either need to replicate the SSH keys yourself, or alternatively generate
 multiple keys and add to `.ssh/authorized_keys` yourself as appropriate. The
-Control container should be able to reach every node without a password.
+Control container must be able to reach every node without a password.
 
 ```bash
 pg_subnet=$(docker network inspect -f '{{range .IPAM.Config}}{{.Subnet}}{{end}}' $pg_cluster | tr -d '\n')
@@ -88,7 +88,7 @@ Create cluster containers, adjusting `pg_service` or running on different Swarm
 nodes as desired:
 
 ```bash
-pg_image=postgres-xl:latest
+pg_image=tiredpixel/postgres-xl
 pg_data=/var/lib/postgres
 pg_user=postgres
 pg_cluster=postgresql-1
@@ -210,7 +210,7 @@ SELECT * FROM pgxc_node;
 
 - How can GTM Proxies be utilised efficiently?
 
-- What is the role of the pooler ports, and does they work properly?
+- What is the role of the pooler ports, and do they work properly?
 
 - How can the existing `pg_hba.conf` rules be improved to be more secure, not
   requiring `trust` on the subnet?
