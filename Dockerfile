@@ -79,6 +79,7 @@ RUN yum -y install \
         epel-release \
     && \
     yum -y install \
+        openssh-clients \
         openssh-server \
         supervisor \
     && \
