@@ -31,32 +31,32 @@ RUN yum -y install \
     && \
     yum clean all
 
-RUN useradd postgres-xl \
-        -d /var/lib/postgres-xl
+RUN useradd postgres \
+        -d /var/lib/postgres
 
 RUN mkdir -p \
-        /usr/local/lib/postgres-xl \
-        /usr/local/src/postgres-xl \
-        /var/lib/postgres-xl \
-        /var/lib/postgres-xl/.ssh \
+        /usr/local/lib/postgres \
+        /usr/local/src/postgres \
+        /var/lib/postgres \
+        /var/lib/postgres/.ssh \
     && \
-    chown -R postgres-xl:postgres-xl \
-        /usr/local/lib/postgres-xl \
-        /usr/local/src/postgres-xl \
-        /var/lib/postgres-xl \
-        /var/lib/postgres-xl/.ssh
+    chown -R postgres:postgres \
+        /usr/local/lib/postgres \
+        /usr/local/src/postgres \
+        /var/lib/postgres \
+        /var/lib/postgres/.ssh
 
-USER postgres-xl
+USER postgres
 
 RUN git clone \
         -b XL9_5_STABLE \
         git://git.postgresql.org/git/postgres-xl.git \
-        /usr/local/src/postgres-xl
+        /usr/local/src/postgres
 
-WORKDIR /usr/local/src/postgres-xl
+WORKDIR /usr/local/src/postgres
 
 RUN ./configure \
-        --prefix /usr/local/lib/postgres-xl \
+        --prefix /usr/local/lib/postgres \
     && \
     make \
     && \
@@ -72,22 +72,22 @@ RUN make install \
     && \
     make install
 
-USER postgres-xl
+USER postgres
 
-WORKDIR /var/lib/postgres-xl
+WORKDIR /var/lib/postgres
 
-RUN echo 'export PATH=$PATH:/usr/local/lib/postgres-xl/bin' >> .bashrc
+RUN echo 'export PATH=$PATH:/usr/local/lib/postgres/bin' >> .bashrc
 
 USER root
 
-COPY postgres-xl/init.sh .
+COPY postgres/init.sh .
 
-RUN chown postgres-xl:postgres-xl init.sh
+RUN chown postgres:postgres init.sh
 
 VOLUME \
     /etc/ssh \
-    /var/lib/postgres-xl \
-    /var/lib/postgres-xl/.ssh
+    /var/lib/postgres \
+    /var/lib/postgres/.ssh
 
 COPY supervisor/supervisord.conf /etc/supervisord.d/supervisord.conf
 
