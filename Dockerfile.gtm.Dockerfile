@@ -89,19 +89,22 @@ ENV \
 WORKDIR ${PG_HOME}
 #===============================================================================
 ENV \
-    GTM_HOST=0.0.0.0 \
-    GTM_PORT=6666 \
-    GTM_NODE=gtm-1
+    PG_GTM_HOST=0.0.0.0 \
+    PG_GTM_PORT=6666 \
+    PG_GTM_NODE=gtm_m_1
 #-------------------------------------------------------------------------------
-RUN initgtm -Z gtm -D ${PGDATA}
+RUN initgtm \
+    -D ${PGDATA} \
+    -Z gtm
 
 VOLUME ${PGDATA}
 
-CMD gtm -D ${PGDATA} \
-    -h ${GTM_HOST} \
-    -n ${GTM_NODE} \
-    -p ${GTM_PORT} \
+CMD gtm \
+    -D ${PGDATA} \
+    -h ${PG_GTM_HOST} \
+    -n ${PG_GTM_NODE} \
+    -p ${PG_GTM_PORT} \
     -l /dev/stdout
 
-EXPOSE ${GTM_PORT}
+EXPOSE ${PG_GTM_PORT}
 #===============================================================================

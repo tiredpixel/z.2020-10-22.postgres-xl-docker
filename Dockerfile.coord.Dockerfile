@@ -89,26 +89,25 @@ ENV \
 WORKDIR ${PG_HOME}
 #===============================================================================
 ENV \
-    PG_PROXY_HOST=0.0.0.0 \
-    PG_PROXY_PORT=6666 \
-    PG_PROXY_NODE=gtm_p_1 \
-    PG_GTM_HOST=gtm_m_1 \
+    PG_COORD_HOST=0.0.0.0 \
+    PG_COORD_PORT=5432 \
+    PG_COORD_NODE=coord_m_1 \
+    PG_GTM_HOST=gtm_p_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initgtm \
+RUN initdb \
     -D ${PGDATA} \
-    -Z gtm_proxy
+    --nodename=${PG_COORD_NODE}
 
 VOLUME ${PGDATA}
 
-CMD gtm_proxy \
+CMD postgres \
     -D ${PGDATA} \
-    -h ${PG_PROXY_HOST} \
-    -p ${PG_PROXY_PORT} \
-    -i ${PG_PROXY_NODE} \
-    -s ${PG_GTM_HOST} \
-    -t ${PG_GTM_PORT} \
-    -l /dev/stdout
+    -h ${PG_COORD_HOST} \
+    -p ${PG_COORD_PORT} \
+    -c gtm_host=${PG_GTM_HOST} \
+    -c gtm_port=${PG_GTM_PORT} \
+    --coordinator
 
-EXPOSE ${PG_PROXY_PORT}
+EXPOSE ${PG_COORD_PORT}
 #===============================================================================

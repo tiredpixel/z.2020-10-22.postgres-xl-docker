@@ -1,18 +1,25 @@
 version: '2'
 services:
-  postgres-gtm:
+  gtm_m_1:
     build:
       context: .
       dockerfile: Dockerfile.gtm.Dockerfile
     networks:
       - postgres-b
-  postgres-gtm-proxy:
+  gtm_p_1:
     environment:
-      - GTM_HOST=postgres-gtm
+      - PG_GTM_HOST=gtm_m_1
     build:
       context: .
       dockerfile: Dockerfile.gtm-proxy.Dockerfile
     networks:
+      - postgres-b
+  coord_m_1:
+    build:
+      context: .
+      dockerfile: Dockerfile.coord.Dockerfile
+    networks:
+      - postgres
       - postgres-b
 networks:
   postgres:
