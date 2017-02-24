@@ -89,19 +89,22 @@ ENV \
 WORKDIR ${PG_HOME}
 #===============================================================================
 ENV \
+    GTM_PROXY_HOST=0.0.0.0 \
+    GTM_PROXY_PORT=6666 \
+    GTM_PROXY_NODE=gtm-proxy-1 \
     GTM_HOST=0.0.0.0 \
-    GTM_PORT=6666 \
-    GTM_NODE=gtm-1
+    GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initgtm -Z gtm -D ${PGDATA}
+RUN initgtm -Z gtm_proxy -D ${PGDATA}
 
 VOLUME ${PGDATA}
 
-CMD gtm -D ${PGDATA} \
-    -h ${GTM_HOST} \
-    -n ${GTM_NODE} \
-    -p ${GTM_PORT} \
+CMD gtm_proxy -D ${PGDATA} \
+    -h ${GTM_PROXY_HOST} \
+    -p ${GTM_PROXY_PORT} \
+    -i ${GTM_PROXY_NODE} \
+    -s ${GTM_HOST} \
+    -t ${GTM_PORT} \
     -l /dev/stdout
 
-EXPOSE ${GTM_PORT}
-#===============================================================================
+EXPOSE ${GTM_PROXY_PORT}

@@ -6,6 +6,14 @@ services:
       dockerfile: Dockerfile.gtm.Dockerfile
     networks:
       - postgres-b
+  postgres-gtm-proxy:
+    environment:
+      - GTM_HOST=postgres-gtm
+    build:
+      context: .
+      dockerfile: Dockerfile.gtm-proxy.Dockerfile
+    networks:
+      - postgres-b
 networks:
   postgres:
     external:
