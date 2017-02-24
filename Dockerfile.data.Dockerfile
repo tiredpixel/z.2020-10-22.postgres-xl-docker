@@ -87,6 +87,8 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+VOLUME ${PG_HOME}
 #===============================================================================
 ENV \
     PG_DATA_HOST=0.0.0.0 \
@@ -95,13 +97,13 @@ ENV \
     PG_GTM_HOST=gtm_p_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initdb \
+CMD ( \
+    ! test -d ${PGDATA} && \
+    initdb \
     -D ${PGDATA} \
-    --nodename=${PG_DATA_NODE}
-
-VOLUME ${PG_HOME}
-
-CMD postgres \
+    --nodename=${PG_DATA_NODE} \
+    ) || \
+    postgres \
     -D ${PGDATA} \
     -h ${PG_DATA_HOST} \
     -p ${PG_DATA_PORT} \

@@ -87,6 +87,8 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+VOLUME ${PG_HOME}
 #===============================================================================
 ENV \
     PG_PROXY_HOST=0.0.0.0 \
@@ -95,13 +97,13 @@ ENV \
     PG_GTM_HOST=gtm_m_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initgtm \
+CMD ( \
+    ! test -d ${PGDATA} && \
+    initgtm \
     -D ${PGDATA} \
-    -Z gtm_proxy
-
-VOLUME ${PG_HOME}
-
-CMD gtm_proxy \
+    -Z gtm_proxy \
+    ) || \
+    gtm_proxy \
     -D ${PGDATA} \
     -h ${PG_PROXY_HOST} \
     -p ${PG_PROXY_PORT} \
