@@ -99,7 +99,7 @@ RUN initgtm \
     -D ${PGDATA} \
     -Z gtm_proxy
 
-VOLUME ${PGDATA}
+VOLUME ${PG_HOME}
 
 CMD gtm_proxy \
     -D ${PGDATA} \

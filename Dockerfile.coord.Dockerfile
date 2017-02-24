@@ -99,7 +99,7 @@ RUN initdb \
     -D ${PGDATA} \
     --nodename=${PG_COORD_NODE}
 
-VOLUME ${PGDATA}
+VOLUME ${PG_HOME}
 
 CMD postgres \
     -D ${PGDATA} \

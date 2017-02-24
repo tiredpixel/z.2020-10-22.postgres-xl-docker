@@ -97,7 +97,7 @@ RUN initgtm \
     -D ${PGDATA} \
     -Z gtm
 
-VOLUME ${PGDATA}
+VOLUME ${PG_HOME}
 
 CMD gtm \
     -D ${PGDATA} \
