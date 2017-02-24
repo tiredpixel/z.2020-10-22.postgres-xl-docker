@@ -1,0 +1,15 @@
+version: '2'
+services:
+  postgres-gtm:
+    build:
+      context: .
+      dockerfile: Dockerfile.gtm.Dockerfile
+    networks:
+      - postgres-b
+networks:
+  postgres:
+    external:
+      name: postgres
+  postgres-b:
+    external:
+      name: postgres-b
