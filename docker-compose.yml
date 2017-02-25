@@ -1,0 +1,103 @@
+version: '2'
+services:
+  #=============================================================================
+  gtm_1:
+    #environment:
+    #  - PG_GTM_NODE=gtm_1
+    #  - PG_GTM_HOST=0.0.0.0
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.gtm.Dockerfile
+    volumes:
+      - gtm_1:/var/lib/postgresql
+    networks:
+      - postgres-a
+  proxy_1:
+    #environment:
+    #  - PG_PROXY_NODE=proxy_1
+    #  - PG_PROXY_HOST=0.0.0.0
+    #  - PG_PROXY_PORT=6666
+    #  - PG_GTM_HOST=gtm_1
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy.Dockerfile
+    volumes:
+      - proxy_1:/var/lib/postgresql
+    networks:
+      - postgres-a
+  coord_1:
+    env_file: .env
+    #environment:
+    #  - PG_COORD_NODE=coord_1
+    #  - PG_COORD_HOST=0.0.0.0
+    #  - PG_COORD_PORT=5432
+    #  - PG_GTM_HOST=proxy_1
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.coord.Dockerfile
+    volumes:
+      - coord_1:/var/lib/postgresql
+    networks:
+      - postgres-a
+      - postgres-b
+  data_1:
+    env_file: .env
+    #environment:
+    #  - PG_DATA_NODE=data_1
+    #  - PG_DATA_HOST=0.0.0.0
+    #  - PG_DATA_PORT=5432
+    #  - PG_GTM_HOST=proxy_1
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.data.Dockerfile
+    volumes:
+      - data_1:/var/lib/postgresql
+    networks:
+      - postgres-a
+  #-----------------------------------------------------------------------------
+  proxy_2:
+    extends: proxy_1
+    environment:
+      - PG_PROXY_NODE=proxy_2
+    volumes:
+      - proxy_2:/var/lib/postgresql
+  coord_2:
+    extends: coord_1
+    environment:
+      - PG_COORD_NODE=coord_2
+      - PG_GTM_HOST=proxy_2
+    volumes:
+      - coord_2:/var/lib/postgresql
+  data_2:
+    extends: data_1
+    environment:
+      - PG_DATA_NODE=data_2
+      - PG_GTM_HOST=proxy_2
+    volumes:
+      - data_2:/var/lib/postgresql
+  #=============================================================================
+volumes:
+  #=============================================================================
+  gtm_1:
+    driver: local
+  proxy_1:
+    driver: local
+  coord_1:
+    driver: local
+  data_1:
+    driver: local
+  #-----------------------------------------------------------------------------
+  proxy_2:
+    driver: local
+  coord_2:
+    driver: local
+  data_2:
+    driver: local
+  #=============================================================================
+networks:
+  postgres-a: {}
+  postgres-b: {}
