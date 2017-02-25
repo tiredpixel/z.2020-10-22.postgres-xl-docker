@@ -40,6 +40,28 @@ These instructions, along with the provided `docker-compose.yml` file, create:
 - 2 Coordinators (master) (`coord_1`, `coord_2`)
 - 2 Datanodes    (master) (`data_1`,  `data_2`)
 
+```txt
+                                  ------------
+                                  |  gtm_1   |
+                                  ------------
+                                /             \
+                              /                 \
+                            /                     \
+                          /                         \
+              ------------                           ------------
+              | proxy_1  |                           | proxy_2  |
+              ------------                           ------------
+               |          \                         /          |
+               |        ------------        ------------       |
+               |        | coord_1  |        | coord_2  |       |
+               |        ------------        ------------       |
+               |       /             \    /             \      |
+               |     /                 \/                 \    |
+         ------------      ------------/\------------      ------------
+         |  data_1  |     /                          \     |  data_2  |
+         ------------ ----                            ---- ------------
+```
+
 Other topologies are possible; you likely only need to edit
 `docker-compose.yml`, potentially setting additional environment variables, and adjust the initialisation steps below.
 
