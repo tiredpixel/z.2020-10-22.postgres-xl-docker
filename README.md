@@ -19,6 +19,13 @@ The pgxc_ctl binary continues to be compiled and provided in the image in case
 people find it useful, but this might change in the future, since the up-to-date
 recommended Postgres-XL Docker workflow is to *not* use it.
 
+TYPE        | REPO
+======================================================================
+GTM         | <https://hub.docker.com/r/tiredpixel/postgres-xl-gtm/>
+GTM Proxy   | <https://hub.docker.com/r/tiredpixel/postgres-xl-proxy/>
+Coordinator | <https://hub.docker.com/r/tiredpixel/postgres-xl-coord/>
+Datanode    | <https://hub.docker.com/r/tiredpixel/postgres-xl-data/>
+
 
 ## Usage
 
