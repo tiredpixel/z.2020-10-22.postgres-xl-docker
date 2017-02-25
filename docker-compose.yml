@@ -17,6 +17,7 @@ services:
     networks:
       - postgres-cluster
   coord_1:
+    env_file: .env
     build:
       context: .
       dockerfile: Dockerfile.coord.Dockerfile
@@ -26,6 +27,7 @@ services:
       - postgres
       - postgres-cluster
   data_1:
+    env_file: .env
     build:
       context: .
       dockerfile: Dockerfile.data.Dockerfile
