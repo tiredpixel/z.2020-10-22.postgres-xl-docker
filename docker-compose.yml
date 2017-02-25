@@ -7,7 +7,7 @@ services:
     volumes:
       - gtm_1:/var/lib/postgresql
     networks:
-      - postgres-cluster
+      - postgres-a
   proxy_1:
     build:
       context: .
@@ -15,7 +15,7 @@ services:
     volumes:
       - proxy_1:/var/lib/postgresql
     networks:
-      - postgres-cluster
+      - postgres-a
   coord_1:
     env_file: .env
     build:
@@ -24,8 +24,8 @@ services:
     volumes:
       - coord_1:/var/lib/postgresql
     networks:
-      - postgres
-      - postgres-cluster
+      - postgres-a
+      - postgres-b
   data_1:
     env_file: .env
     build:
@@ -34,7 +34,7 @@ services:
     volumes:
       - data_1:/var/lib/postgresql
     networks:
-      - postgres-cluster
+      - postgres-a
   coord_2:
     extends: coord_1
     environment:
@@ -61,6 +61,5 @@ volumes:
   data_2:
     driver: local
 networks:
-  postgres: {}
-  postgres-cluster:
-    internal: true
+  postgres-a: {}
+  postgres-b: {}
