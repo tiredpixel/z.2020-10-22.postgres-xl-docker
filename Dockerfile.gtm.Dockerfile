@@ -87,21 +87,19 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
-
-VOLUME ${PG_HOME}
 #===============================================================================
 ENV \
     PG_GTM_HOST=0.0.0.0 \
     PG_GTM_PORT=6666 \
     PG_GTM_NODE=gtm_m_1
 #-------------------------------------------------------------------------------
-CMD ( \
-    ! test -d ${PGDATA} && \
-    initgtm \
+RUN initgtm \
     -D ${PGDATA} \
-    -Z gtm \
-    ) || \
-    gtm \
+    -Z gtm
+
+VOLUME ${PG_HOME}
+
+CMD gtm \
     -D ${PGDATA} \
     -h ${PG_GTM_HOST} \
     -n ${PG_GTM_NODE} \
