@@ -1,38 +1,63 @@
 version: '2'
 services:
-  gtm_m_1:
+  gtm_1:
     build:
       context: .
       dockerfile: Dockerfile.gtm.Dockerfile
+    volumes:
+      - gtm_1:/var/lib/postgresql
     networks:
       - postgres-cluster
-  gtm_p_1:
+  proxy_1:
     build:
       context: .
-      dockerfile: Dockerfile.gtm-proxy.Dockerfile
+      dockerfile: Dockerfile.proxy.Dockerfile
+    volumes:
+      - proxy_1:/var/lib/postgresql
     networks:
       - postgres-cluster
-  coord_m_1:
+  coord_1:
     build:
       context: .
       dockerfile: Dockerfile.coord.Dockerfile
+    volumes:
+      - coord_1:/var/lib/postgresql
     networks:
       - postgres
       - postgres-cluster
-  data_m_1:
+  data_1:
     build:
       context: .
       dockerfile: Dockerfile.data.Dockerfile
+    volumes:
+      - data_1:/var/lib/postgresql
     networks:
       - postgres-cluster
-  coord_m_2:
-    extends: coord_m_1
+  coord_2:
+    extends: coord_1
     environment:
-      - PG_COORD_NODE=coord_m_2
-  data_m_2:
-    extends: data_m_1
+      - PG_COORD_NODE=coord_2
+    volumes:
+      - coord_2:/var/lib/postgresql
+  data_2:
+    extends: data_1
     environment:
-      - PG_DATA_NODE=data_m_2
+      - PG_DATA_NODE=data_2
+    volumes:
+      - data_2:/var/lib/postgresql
+volumes:
+  gtm_1:
+    driver: local
+  proxy_1:
+    driver: local
+  coord_1:
+    driver: local
+  data_1:
+    driver: local
+  coord_2:
+    driver: local
+  data_2:
+    driver: local
 networks:
   postgres: {}
   postgres-cluster:

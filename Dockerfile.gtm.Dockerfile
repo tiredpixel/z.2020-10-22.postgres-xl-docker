@@ -91,11 +91,9 @@ WORKDIR ${PG_HOME}
 ENV \
     PG_GTM_HOST=0.0.0.0 \
     PG_GTM_PORT=6666 \
-    PG_GTM_NODE=gtm_m_1
+    PG_GTM_NODE=gtm_1
 #-------------------------------------------------------------------------------
-RUN initgtm \
-    -D ${PGDATA} \
-    -Z gtm
+COPY gtm/init.sh .
 
 VOLUME ${PG_HOME}
 

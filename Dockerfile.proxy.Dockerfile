@@ -91,13 +91,11 @@ WORKDIR ${PG_HOME}
 ENV \
     PG_PROXY_HOST=0.0.0.0 \
     PG_PROXY_PORT=6666 \
-    PG_PROXY_NODE=gtm_p_1 \
-    PG_GTM_HOST=gtm_m_1 \
+    PG_PROXY_NODE=proxy_1 \
+    PG_GTM_HOST=gtm_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initgtm \
-    -D ${PGDATA} \
-    -Z gtm_proxy
+COPY proxy/init.sh .
 
 VOLUME ${PG_HOME}
 

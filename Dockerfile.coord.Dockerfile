@@ -91,13 +91,11 @@ WORKDIR ${PG_HOME}
 ENV \
     PG_COORD_HOST=0.0.0.0 \
     PG_COORD_PORT=5432 \
-    PG_COORD_NODE=coord_m_1 \
-    PG_GTM_HOST=gtm_p_1 \
+    PG_COORD_NODE=coord_1 \
+    PG_GTM_HOST=proxy_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
-RUN initdb \
-    -D ${PGDATA} \
-    --nodename=${PG_COORD_NODE}
+COPY coord/init.sh .
 
 VOLUME ${PG_HOME}
 
