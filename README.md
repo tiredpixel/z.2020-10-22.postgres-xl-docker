@@ -43,23 +43,22 @@ not use the provided `init.sh` helper scripts.
 These instructions, along with the provided `docker-compose.yml` file, create:
 
 - 1 GTM          (master) (`gtm_1`)
-- 2 GTM Proxies           (`proxy_1`, `proxy_2`)
 - 2 Coordinators (master) (`coord_1`, `coord_2`)
 - 2 Datanodes    (master) (`data_1`,  `data_2`)
 
 ```txt
-                                  ------------
-                                  |  gtm_1   |
-                                  ------------
-                                /             \
-                              /                 \
-                            /                     \
-                          /                         \
-              ------------                           ------------
-              | proxy_1  |                           | proxy_2  |
-              ------------                           ------------
-               |          \                         /          |
-               |        ------------        ------------       |
+                                 --------------
+                                 |   gtm_1    |
+                                 --------------
+                                / |          | \
+                              /   |          |   \
+                            /     |          |     \
+                          /       |          |       \
+                        /         |          |         \
+                      /           |          |           \
+                    /             |          |             \
+                  /               |          |               \
+                /       ------------        ------------      \
                |        | coord_1  |        | coord_2  |       |
                |        ------------        ------------       |
                |       /             \    /             \      |
@@ -86,7 +85,7 @@ down with a failure because of not yet being initialised:
 docker-compose up
 ```
 
-This will create backend (`postgres-a`) and frontend (`postgres-b`) networks.
+This will create backend (`db_a`) and frontend (`db_b`) networks.
 Extract the network address of the backend network, and add it to `.env` as
 `PG_NET_CLUSTER_A`, using the helper script:
 
@@ -100,7 +99,7 @@ bin/get-PG_NET_CLUSTER_A.sh
 Initialise each of the nodes using the supplied helper scripts:
 
 ```sh
-for node in gtm_1 proxy_1 proxy_2 coord_1 coord_2 data_1 data_2
+for node in gtm_1 coord_1 coord_2 data_1 data_2
 do
 docker-compose run --rm $node ./init.sh
 done
