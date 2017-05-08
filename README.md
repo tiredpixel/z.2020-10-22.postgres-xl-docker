@@ -105,10 +105,10 @@ On coordinators and datanodes:
 ```sql
 ALTER NODE data_1 WITH (TYPE = 'datanode');
 ALTER NODE data_2 WITH (TYPE = 'datanode');
-CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'coord_1', PORT = 5432);
-CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'coord_2', PORT = 5432);
-CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'data_1',  PORT = 5432);
-CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'data_2',  PORT = 5432);
+CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);
+CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);
+CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);
+CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);
 SELECT pgxc_pool_reload();
 ```
 
