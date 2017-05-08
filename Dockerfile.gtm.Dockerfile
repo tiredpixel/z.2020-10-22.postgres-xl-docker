@@ -87,9 +87,12 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+COPY docker-entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 #===============================================================================
 ENV \
-    PG_GTM_NODE=gtm_1 \
     PG_GTM_HOST=0.0.0.0 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
@@ -105,4 +108,6 @@ CMD gtm \
     -l /dev/stdout
 
 EXPOSE ${PG_GTM_PORT}
+
+HEALTHCHECK CMD curl -fs http://${PG_GTM_HOST}:${PG_GTM_PORT} || false
 #===============================================================================

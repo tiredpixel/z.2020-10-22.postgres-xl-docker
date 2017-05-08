@@ -19,6 +19,13 @@ The pgxc_ctl binary continues to be compiled and provided in the image in case
 people find it useful, but this might change in the future, since the up-to-date
 recommended Postgres-XL Docker workflow is to *not* use it.
 
+TYPE        | REPO
+------------|---------------------------------------------------------
+GTM         | <https://hub.docker.com/r/tiredpixel/postgres-xl-gtm/>
+GTM Proxy   | <https://hub.docker.com/r/tiredpixel/postgres-xl-proxy/>
+Coordinator | <https://hub.docker.com/r/tiredpixel/postgres-xl-coord/>
+Datanode    | <https://hub.docker.com/r/tiredpixel/postgres-xl-data/>
+
 
 ## Usage
 
@@ -36,23 +43,22 @@ not use the provided `init.sh` helper scripts.
 These instructions, along with the provided `docker-compose.yml` file, create:
 
 - 1 GTM          (master) (`gtm_1`)
-- 2 GTM Proxies           (`proxy_1`, `proxy_2`)
 - 2 Coordinators (master) (`coord_1`, `coord_2`)
 - 2 Datanodes    (master) (`data_1`,  `data_2`)
 
 ```txt
-                                  ------------
-                                  |  gtm_1   |
-                                  ------------
-                                /             \
-                              /                 \
-                            /                     \
-                          /                         \
-              ------------                           ------------
-              | proxy_1  |                           | proxy_2  |
-              ------------                           ------------
-               |          \                         /          |
-               |        ------------        ------------       |
+                                 --------------
+                                 |   gtm_1    |
+                                 --------------
+                                / |          | \
+                              /   |          |   \
+                            /     |          |     \
+                          /       |          |       \
+                        /         |          |         \
+                      /           |          |           \
+                    /             |          |             \
+                  /               |          |               \
+                /       ------------        ------------      \
                |        | coord_1  |        | coord_2  |       |
                |        ------------        ------------       |
                |       /             \    /             \      |
@@ -63,7 +69,7 @@ These instructions, along with the provided `docker-compose.yml` file, create:
 ```
 
 Other topologies are possible; you likely only need to edit
-`docker-compose.yml`, potentially setting additional environment variables, and adjust the initialisation steps below.
+`docker-compose.yml`, potentially setting additional environment variables.
 
 
 ## Build
@@ -72,41 +78,18 @@ Create a `.env` file from exampled `.env.example`.
 
 Edit `docker-compose.yml` to reflect the desired topology.
 
-Build services by bringing them up; at the end of the build, services will shut
-down with a failure because of not yet being initialised:
+Build services by bringing them up.
 
 ```sh
 docker-compose up
 ```
 
-This will create backend (`postgres-a`) and frontend (`postgres-b`) networks.
+This will create backend (`db_a`) and frontend (`db_b`) networks.
 Extract the network address of the backend network, and add it to `.env` as
 `PG_NET_CLUSTER_A`, using the helper script:
 
 ```sh
 bin/get-PG_NET_CLUSTER_A.sh
-```
-
-
-## Initialisation
-
-Initialise each of the nodes using the supplied helper scripts:
-
-```sh
-for node in gtm_1 proxy_1 proxy_2 coord_1 coord_2 data_1 data_2
-do
-docker-compose run --rm $node ./init.sh
-done
-```
-
-As part of the initialisation, `pg_hba.conf` rules are set to allow all traffic
-on the backend network (see warning above, and ensure that it is adequently
-protected or that you use an alternative).
-
-Start the services, which should now boot and stay running:
-
-```sh
-docker-compose up
 ```
 
 
@@ -122,10 +105,10 @@ On coordinators and datanodes:
 ```sql
 ALTER NODE data_1 WITH (TYPE = 'datanode');
 ALTER NODE data_2 WITH (TYPE = 'datanode');
-CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'coord_1', PORT = 5432);
-CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'coord_2', PORT = 5432);
-CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'data_1',  PORT = 5432);
-CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'data_2',  PORT = 5432);
+CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);
+CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);
+CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);
+CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);
 SELECT pgxc_pool_reload();
 ```
 

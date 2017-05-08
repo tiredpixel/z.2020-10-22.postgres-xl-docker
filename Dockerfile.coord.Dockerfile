@@ -87,13 +87,17 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+COPY docker-entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 #===============================================================================
 ENV \
-    PG_COORD_NODE=coord_1 \
     PG_COORD_HOST=0.0.0.0 \
     PG_COORD_PORT=5432 \
-    PG_GTM_HOST=proxy_1 \
-    PG_GTM_PORT=6666
+    PG_GTM_HOST=db_gtm_1 \
+    PG_GTM_PORT=6666 \
+    PG_USER_HEALTHCHECK=_healthcheck
 #-------------------------------------------------------------------------------
 COPY coord/init.sh .
 
@@ -108,4 +112,6 @@ CMD postgres \
     --coordinator
 
 EXPOSE ${PG_COORD_PORT}
+
+HEALTHCHECK CMD createuser ${PG_USER_HEALTHCHECK} ; createdb ${PG_USER_HEALTHCHECK} ; psql -h ${PG_COORD_HOST} -p ${PG_COORD_PORT} -U ${PG_USER_HEALTHCHECK} -c 'SELECT version()' || false
 #===============================================================================

@@ -87,12 +87,15 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+COPY docker-entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 #===============================================================================
 ENV \
-    PG_PROXY_NODE=proxy_1 \
     PG_PROXY_HOST=0.0.0.0 \
     PG_PROXY_PORT=6666 \
-    PG_GTM_HOST=gtm_1 \
+    PG_GTM_HOST=db_gtm_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
 COPY proxy/init.sh .
