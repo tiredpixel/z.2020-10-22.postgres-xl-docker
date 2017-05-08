@@ -1,94 +1,105 @@
-version: '2'
+version: "3"
 services:
-  #=============================================================================
-  gtm_1:
-    #environment:
-    #  - PG_GTM_NODE=gtm_1
+  db_gtm_1:
+    #command: ./init.sh
+    environment:
+      - PG_GTM_NODE=gtm_1
     #  - PG_GTM_HOST=0.0.0.0
     #  - PG_GTM_PORT=6666
     build:
       context: .
       dockerfile: Dockerfile.gtm.Dockerfile
     volumes:
-      - gtm_1:/var/lib/postgresql
+      - db_gtm_1:/var/lib/postgresql
     networks:
-      - postgres-a
-  coord_1:
-    env_file: .env
-    #environment:
-    #  - PG_COORD_NODE=coord_1
+      - db_a
+  db_coord_1:
+    #command: ./init.sh
+    environment:
+      - PG_COORD_NODE=coord_1
+      - PG_NET_CLUSTER_A
     #  - PG_COORD_HOST=0.0.0.0
     #  - PG_COORD_PORT=5432
-    #  - PG_GTM_HOST=gtm_1
+    #  - PG_GTM_HOST=db_gtm_1
     #  - PG_GTM_PORT=6666
     build:
       context: .
       dockerfile: Dockerfile.coord.Dockerfile
-    depends_on:
-      - gtm_1
     volumes:
-      - coord_1:/var/lib/postgresql
-    networks:
-      - postgres-a
-      - postgres-b
-  data_1:
-    env_file: .env
-    #environment:
-    #  - PG_DATA_NODE=data_1
-    #  - PG_DATA_HOST=0.0.0.0
-    #  - PG_DATA_PORT=5432
-    #  - PG_GTM_HOST=gtm_1
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.data.Dockerfile
+      - db_coord_1:/var/lib/postgresql
     depends_on:
-      - coord_1
-    volumes:
-      - data_1:/var/lib/postgresql
+      - db_gtm_1
     networks:
-      - postgres-a
-  #-----------------------------------------------------------------------------
-  coord_2:
-    build:
-      context: .
-      dockerfile: Dockerfile.coord.Dockerfile
-    depends_on:
-      - gtm_1
+      - db_a
+      - db_b
+  db_coord_2:
+    #command: ./init.sh
     environment:
       - PG_COORD_NODE=coord_2
+      - PG_NET_CLUSTER_A
+    #  - PG_COORD_HOST=0.0.0.0
+    #  - PG_COORD_PORT=5432
+    #  - PG_GTM_HOST=db_gtm_1
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.coord.Dockerfile
     volumes:
-      - coord_2:/var/lib/postgresql
+      - db_coord_2:/var/lib/postgresql
+    depends_on:
+      - db_gtm_1
     networks:
-      - postgres-a
-      - postgres-b
-  data_2:
+      - db_a
+      - db_b
+  db_data_1:
+    #command: ./init.sh
+    environment:
+      - PG_DATA_NODE=data_1
+      - PG_NET_CLUSTER_A
+    #  - PG_DATA_HOST=0.0.0.0
+    #  - PG_DATA_PORT=5432
+    #  - PG_GTM_HOST=db_gtm_1
+    #  - PG_GTM_PORT=6666
     build:
       context: .
       dockerfile: Dockerfile.data.Dockerfile
     depends_on:
-      - coord_2
+      - db_gtm_1
+    volumes:
+      - db_data_1:/var/lib/postgresql
+    networks:
+      - db_a
+  db_data_2:
+    #command: ./init.sh
     environment:
       - PG_DATA_NODE=data_2
+      - PG_NET_CLUSTER_A
+    #  - PG_DATA_HOST=0.0.0.0
+    #  - PG_DATA_PORT=5432
+    #  - PG_GTM_HOST=db_gtm_1
+    #  - PG_GTM_PORT=6666
+    build:
+      context: .
+      dockerfile: Dockerfile.data.Dockerfile
+    depends_on:
+      - db_gtm_1
     volumes:
-      - data_2:/var/lib/postgresql
+      - db_data_2:/var/lib/postgresql
     networks:
-      - postgres-a
-  #=============================================================================
+      - db_a
 volumes:
-  #=============================================================================
-  gtm_1:
+  db_gtm_1:
     driver: local
-  coord_1:
+  db_coord_1:
     driver: local
-  data_1:
+  db_coord_2:
     driver: local
-  #-----------------------------------------------------------------------------
-  coord_2:
+  db_data_1:
     driver: local
-  data_2:
+  db_data_2:
     driver: local
-  #=============================================================================
 networks:
-  postgres-a: {}
-  postgres-b: {}
+  db_a:
+    driver: bridge
+  db_b:
+    driver: bridge

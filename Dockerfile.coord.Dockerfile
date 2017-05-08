@@ -89,10 +89,9 @@ ENV \
 WORKDIR ${PG_HOME}
 #===============================================================================
 ENV \
-    PG_COORD_NODE=coord_1 \
     PG_COORD_HOST=0.0.0.0 \
     PG_COORD_PORT=5432 \
-    PG_GTM_HOST=gtm_1 \
+    PG_GTM_HOST=db_gtm_1 \
     PG_GTM_PORT=6666
 #-------------------------------------------------------------------------------
 COPY coord/init.sh .

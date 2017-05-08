@@ -85,7 +85,7 @@ down with a failure because of not yet being initialised:
 docker-compose up
 ```
 
-This will create backend (`postgres-a`) and frontend (`postgres-b`) networks.
+This will create backend (`db_a`) and frontend (`db_b`) networks.
 Extract the network address of the backend network, and add it to `.env` as
 `PG_NET_CLUSTER_A`, using the helper script:
 
