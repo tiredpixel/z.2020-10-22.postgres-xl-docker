@@ -108,4 +108,6 @@ CMD gtm \
     -l /dev/stdout
 
 EXPOSE ${PG_GTM_PORT}
+
+HEALTHCHECK CMD curl -fs http://${PG_GTM_HOST}:${PG_GTM_PORT} || false
 #===============================================================================

@@ -96,7 +96,8 @@ ENV \
     PG_DATA_HOST=0.0.0.0 \
     PG_DATA_PORT=5432 \
     PG_GTM_HOST=db_gtm_1 \
-    PG_GTM_PORT=6666
+    PG_GTM_PORT=6666 \
+    PG_USER_HEALTHCHECK=_healthcheck
 #-------------------------------------------------------------------------------
 COPY data/init.sh .
 
@@ -111,4 +112,6 @@ CMD postgres \
     --datanode
 
 EXPOSE ${PG_DATA_PORT}
+
+HEALTHCHECK CMD psql -h ${PG_DATA_HOST} -p ${PG_DATA_PORT} -U ${PG_USER_HEALTHCHECK} -c 'SELECT version()' || false
 #===============================================================================
