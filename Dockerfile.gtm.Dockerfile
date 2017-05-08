@@ -87,6 +87,10 @@ ENV \
     PGDATA=${PG_HOME}/data
 
 WORKDIR ${PG_HOME}
+
+COPY docker-entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 #===============================================================================
 ENV \
     PG_GTM_HOST=0.0.0.0 \

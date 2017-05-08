@@ -1,7 +1,6 @@
 version: "3"
 services:
   db_gtm_1:
-    #command: ./init.sh
     environment:
       - PG_GTM_NODE=gtm_1
     #  - PG_GTM_HOST=0.0.0.0
@@ -14,7 +13,6 @@ services:
     networks:
       - db_a
   db_coord_1:
-    #command: ./init.sh
     environment:
       - PG_COORD_NODE=coord_1
       - PG_NET_CLUSTER_A
@@ -33,7 +31,6 @@ services:
       - db_a
       - db_b
   db_coord_2:
-    #command: ./init.sh
     environment:
       - PG_COORD_NODE=coord_2
       - PG_NET_CLUSTER_A
@@ -52,7 +49,6 @@ services:
       - db_a
       - db_b
   db_data_1:
-    #command: ./init.sh
     environment:
       - PG_DATA_NODE=data_1
       - PG_NET_CLUSTER_A
@@ -70,7 +66,6 @@ services:
     networks:
       - db_a
   db_data_2:
-    #command: ./init.sh
     environment:
       - PG_DATA_NODE=data_2
       - PG_NET_CLUSTER_A
