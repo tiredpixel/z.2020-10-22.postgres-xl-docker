@@ -69,7 +69,7 @@ These instructions, along with the provided `docker-compose.yml` file, create:
 ```
 
 Other topologies are possible; you likely only need to edit
-`docker-compose.yml`, potentially setting additional environment variables, and adjust the initialisation steps below.
+`docker-compose.yml`, potentially setting additional environment variables.
 
 
 ## Build
@@ -78,8 +78,7 @@ Create a `.env` file from exampled `.env.example`.
 
 Edit `docker-compose.yml` to reflect the desired topology.
 
-Build services by bringing them up; at the end of the build, services will shut
-down with a failure because of not yet being initialised:
+Build services by bringing them up.
 
 ```sh
 docker-compose up
@@ -91,28 +90,6 @@ Extract the network address of the backend network, and add it to `.env` as
 
 ```sh
 bin/get-PG_NET_CLUSTER_A.sh
-```
-
-
-## Initialisation
-
-Initialise each of the nodes using the supplied helper scripts:
-
-```sh
-for node in gtm_1 coord_1 coord_2 data_1 data_2
-do
-docker-compose run --rm $node ./init.sh
-done
-```
-
-As part of the initialisation, `pg_hba.conf` rules are set to allow all traffic
-on the backend network (see warning above, and ensure that it is adequently
-protected or that you use an alternative).
-
-Start the services, which should now boot and stay running:
-
-```sh
-docker-compose up
 ```
 
 
