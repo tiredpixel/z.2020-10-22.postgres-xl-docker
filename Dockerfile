@@ -31,7 +31,7 @@ RUN useradd ${PG_USER} -d ${PG_HOME} \
 
 WORKDIR ${PG_HOME}
 
-COPY . .
+COPY lib/ ./lib/
 RUN chown -R ${PG_USER}:${PG_USER} ${PG_HOME}
 #-------------------------------------------------------------------------------
 USER ${PG_USER}
@@ -62,6 +62,7 @@ ENV PATH=${PG_LIB}/bin:$PATH \
     PGDATA=${PG_HOME}/data
 
 COPY bin/* ${DOCKER_BIN}/
+COPY ci/ ./ci/
 
 VOLUME ${PG_HOME}
 
