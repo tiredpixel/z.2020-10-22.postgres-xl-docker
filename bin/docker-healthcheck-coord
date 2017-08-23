@@ -1,4 +1,14 @@
 #!/bin/sh
 
 
-createuser ${PG_USER_HEALTHCHECK} ; createdb ${PG_USER_HEALTHCHECK} ; psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER_HEALTHCHECK} -c 'SELECT version()' || false
+psql \
+    -h ${PG_HOST} \
+    -p ${PG_PORT} \
+    -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${PG_USER_HEALTHCHECK}') THEN CREATE ROLE ${PG_USER_HEALTHCHECK} LOGIN; CREATE DATABASE ${PG_USER_HEALTHCHECK}; END IF; END \$\$"
+
+psql \
+    -h ${PG_HOST} \
+    -p ${PG_PORT} \
+    -U ${PG_USER_HEALTHCHECK} \
+    -c 'SELECT version()' \
+    || false
