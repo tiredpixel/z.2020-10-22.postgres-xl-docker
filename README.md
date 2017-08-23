@@ -90,7 +90,18 @@ bin/get-PG_NET_CLUSTER_A.sh
 ```
 
 
-## Clustering
+## Clustering (Automatically)
+
+Prepare an example cluster locally, using the provided example init script.
+This is not designed for production. Instead, configure by hand using whichever
+orchestrator you use, or write your own scripts.
+
+```sh
+bin/init-eg
+```
+
+
+## Clustering (Manually)
 
 Prepare a clustering query, able to be executed on each node. Simplest is to use
 the same query for each node, open `psql` for each, and paste it into each. If
