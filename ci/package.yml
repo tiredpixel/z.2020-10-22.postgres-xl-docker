@@ -17,6 +17,5 @@ run:
       cp $ci/* $pkg
       mkdir $pkg/bin
       cp $bin/* $pkg/bin
-      cp $src/bin/* $pkg/bin
       
       ls -AlhR $pkg

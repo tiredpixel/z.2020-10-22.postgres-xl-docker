@@ -3,7 +3,6 @@ FROM centos:7
 
 MAINTAINER tiredpixel <tiredpixel@posteo.de>
 
-ARG DOCKER_BIN=/usr/local/bin
 ARG PG_HOME=/var/lib/postgresql
 ARG PG_LIB=/usr/local/lib/postgresql
 ARG PG_USER=postgres
@@ -61,7 +60,7 @@ WORKDIR ${PG_HOME}
 ENV PATH=${PG_LIB}/bin:$PATH \
     PGDATA=${PG_HOME}/data
 
-COPY bin/* ${DOCKER_BIN}/
+COPY bin/* ${PG_LIB}/bin/
 COPY ci/ ./ci/
 
 VOLUME ${PG_HOME}
