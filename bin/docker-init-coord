@@ -1,8 +1,9 @@
 #!/bin/sh
+set -e
 
 initdb \
     -D ${PGDATA} \
-    --nodename=${PG_DATA_NODE}
+    --nodename=${PG_NODE}
 
 echo "pg_hba: adding host trust ${PG_NET_CLUSTER_A}"
 

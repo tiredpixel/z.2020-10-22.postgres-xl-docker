@@ -1,0 +1,41 @@
+#!/bin/sh
+
+
+sqls=( \
+    "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);" \
+    "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);" \
+    "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);" \
+    "CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);" \
+    "ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);" \
+    "ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);" \
+    "ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);" \
+    "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);" \
+    "SELECT pgxc_pool_reload();" \
+    "SELECT * FROM pgxc_node;" \
+    )
+
+
+nodes=( \
+    db_coord_1 \
+    db_coord_2 \
+    db_data_1 \
+    db_data_2 \
+    )
+
+for node in "${nodes[@]}"
+do
+    echo "================================================================================"
+    echo $node
+    echo
+    docker-compose start $node
+    
+    for sql in "${sqls[@]}"
+    do
+        echo $sql
+        docker-compose exec $node psql -c "$sql"
+    done
+    
+    docker-compose stop $node
+    docker-compose start $node
+    echo "================================================================================"
+done

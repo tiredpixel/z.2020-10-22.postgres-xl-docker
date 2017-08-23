@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+gtm_proxy \
+    -D ${PGDATA} \
+    -h ${PG_HOST} \
+    -p ${PG_PORT} \
+    -i ${PG_NODE} \
+    -s ${PG_GTM_HOST} \
+    -t ${PG_GTM_PORT} \
+    -l /dev/stdout

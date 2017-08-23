@@ -19,12 +19,9 @@ The pgxc_ctl binary continues to be compiled and provided in the image in case
 people find it useful, but this might change in the future, since the up-to-date
 recommended Postgres-XL Docker workflow is to *not* use it.
 
-TYPE        | REPO
-------------|---------------------------------------------------------
-GTM         | <https://hub.docker.com/r/tiredpixel/postgres-xl-gtm/>
-GTM Proxy   | <https://hub.docker.com/r/tiredpixel/postgres-xl-proxy/>
-Coordinator | <https://hub.docker.com/r/tiredpixel/postgres-xl-coord/>
-Datanode    | <https://hub.docker.com/r/tiredpixel/postgres-xl-data/>
+Build cluster time and large-scale performance and stability testing is donated
+by my company, *Pavouk OÜ* (Estonia, UK). Patches are tested internally, and
+made available to the community open-source. <3
 
 
 ## Usage
@@ -93,7 +90,18 @@ bin/get-PG_NET_CLUSTER_A.sh
 ```
 
 
-## Clustering
+## Clustering (Automatically)
+
+Prepare an example cluster locally, using the provided example init script.
+This is not designed for production. Instead, configure by hand using whichever
+orchestrator you use, or write your own scripts.
+
+```sh
+bin/init-eg
+```
+
+
+## Clustering (Manually)
 
 Prepare a clustering query, able to be executed on each node. Simplest is to use
 the same query for each node, open `psql` for each, and paste it into each. If
