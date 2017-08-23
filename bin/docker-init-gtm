@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-cp /usr/local/bin/docker-healthcheck-gtm /usr/local/bin/docker-healthcheck
-
 initgtm \
     -D ${PGDATA} \
     -Z gtm

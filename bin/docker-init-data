@@ -2,8 +2,6 @@
 set -e
 
 
-cp /usr/local/bin/docker-healthcheck-data /usr/local/bin/docker-healthcheck
-
 initdb \
     -D ${PGDATA} \
     --nodename=${PG_NODE}

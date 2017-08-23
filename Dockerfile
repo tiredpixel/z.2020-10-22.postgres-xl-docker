@@ -53,10 +53,6 @@ RUN make install \
     cd contrib/pgxc_ctl \
     && \
     make install
-
-RUN touch ${DOCKER_BIN}/docker-healthcheck \
-    && \
-    chown ${PG_USER}:${PG_USER} ${DOCKER_BIN}/docker-healthcheck
 #-------------------------------------------------------------------------------
 USER ${PG_USER}
 
@@ -70,5 +66,4 @@ COPY bin/* ${DOCKER_BIN}/
 VOLUME ${PG_HOME}
 
 ENV PG_USER_HEALTHCHECK ${PG_USER_HEALTHCHECK}
-HEALTHCHECK CMD ["docker-healthcheck"]
 #===============================================================================
