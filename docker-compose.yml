@@ -99,5 +99,13 @@ volumes:
   db_data_1: {}
   db_data_2: {}
 networks:
-  db_a: {}
-  db_b: {}
+  db_a:
+    ipam:
+      config:
+        -
+          subnet: ${PG_NET_CLUSTER_A}
+  db_b:
+    ipam:
+      config:
+        -
+          subnet: ${PG_NET_CLUSTER_B}

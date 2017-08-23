@@ -1,3 +1,5 @@
 *.yml
 .*/
 README.md
+bin/get-PG_NET_CLUSTER_A.sh
+bin/init-eg
