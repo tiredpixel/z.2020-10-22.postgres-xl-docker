@@ -1,8 +1,12 @@
 #!/bin/sh
+set -e
+
+
+cp /usr/local/bin/docker-healthcheck-data /usr/local/bin/docker-healthcheck
 
 initdb \
     -D ${PGDATA} \
-    --nodename=${PG_COORD_NODE}
+    --nodename=${PG_NODE}
 
 echo "pg_hba: adding host trust ${PG_NET_CLUSTER_A}"
 

@@ -2,27 +2,27 @@ version: "3"
 services:
   db_gtm_1:
     environment:
-      - PG_GTM_NODE=gtm_1
-    #  - PG_GTM_HOST=0.0.0.0
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.gtm.Dockerfile
+      - PG_HOST=0.0.0.0
+      - PG_NODE=gtm_1
+      - PG_PORT=6666
+    build: .
+    command: docker-cmd-gtm
+    entrypoint: docker-entrypoint-gtm
     volumes:
       - db_gtm_1:/var/lib/postgresql
     networks:
       - db_a
   db_coord_1:
     environment:
-      - PG_COORD_NODE=coord_1
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
       - PG_NET_CLUSTER_A
-    #  - PG_COORD_HOST=0.0.0.0
-    #  - PG_COORD_PORT=5432
-    #  - PG_GTM_HOST=db_gtm_1
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.coord.Dockerfile
+      - PG_NODE=coord_1
+      - PG_PORT=5432
+    build: .
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
     volumes:
       - db_coord_1:/var/lib/postgresql
     depends_on:
@@ -32,15 +32,15 @@ services:
       - db_b
   db_coord_2:
     environment:
-      - PG_COORD_NODE=coord_2
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
       - PG_NET_CLUSTER_A
-    #  - PG_COORD_HOST=0.0.0.0
-    #  - PG_COORD_PORT=5432
-    #  - PG_GTM_HOST=db_gtm_1
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.coord.Dockerfile
+      - PG_NODE=coord_2
+      - PG_PORT=5432
+    build: .
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
     volumes:
       - db_coord_2:/var/lib/postgresql
     depends_on:
@@ -50,15 +50,15 @@ services:
       - db_b
   db_data_1:
     environment:
-      - PG_DATA_NODE=data_1
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
       - PG_NET_CLUSTER_A
-    #  - PG_DATA_HOST=0.0.0.0
-    #  - PG_DATA_PORT=5432
-    #  - PG_GTM_HOST=db_gtm_1
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.data.Dockerfile
+      - PG_NODE=data_1
+      - PG_PORT=5432
+    build: .
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
     depends_on:
       - db_gtm_1
     volumes:
@@ -67,15 +67,15 @@ services:
       - db_a
   db_data_2:
     environment:
-      - PG_DATA_NODE=data_2
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
       - PG_NET_CLUSTER_A
-    #  - PG_DATA_HOST=0.0.0.0
-    #  - PG_DATA_PORT=5432
-    #  - PG_GTM_HOST=db_gtm_1
-    #  - PG_GTM_PORT=6666
-    build:
-      context: .
-      dockerfile: Dockerfile.data.Dockerfile
+      - PG_NODE=data_2
+      - PG_PORT=5432
+    build: .
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
     depends_on:
       - db_gtm_1
     volumes:
@@ -83,18 +83,11 @@ services:
     networks:
       - db_a
 volumes:
-  db_gtm_1:
-    driver: local
-  db_coord_1:
-    driver: local
-  db_coord_2:
-    driver: local
-  db_data_1:
-    driver: local
-  db_data_2:
-    driver: local
+  db_gtm_1: {}
+  db_coord_1: {}
+  db_coord_2: {}
+  db_data_1: {}
+  db_data_2: {}
 networks:
-  db_a:
-    driver: bridge
-  db_b:
-    driver: bridge
+  db_a: {}
+  db_b: {}

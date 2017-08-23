@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+
+cp /usr/local/bin/docker-healthcheck-proxy /usr/local/bin/docker-healthcheck
+
+initgtm \
+    -D ${PGDATA} \
+    -Z gtm_proxy

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+createuser ${PG_USER_HEALTHCHECK} ; createdb ${PG_USER_HEALTHCHECK} ; psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER_HEALTHCHECK} -c 'SELECT version()' || false
