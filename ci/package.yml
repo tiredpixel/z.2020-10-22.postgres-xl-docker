@@ -10,11 +10,11 @@ run:
     - -ce
     - |
       src=/var/lib/postgresql
-      lib=/usr/local/lib/postgresql
+      postgresql=/usr/local/lib/postgresql
       ci=$src/ci
       pkg=$PWD/pkg
       
       cp $ci/* $pkg
-      cp -R $lib $pkg/lib/
+      cp -R $postgresql $pkg/postgresql/
       
       ls -AlhR $pkg

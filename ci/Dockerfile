@@ -21,7 +21,7 @@ WORKDIR ${PG_HOME}
 ENV PATH=${PG_LIB}/bin:$PATH \
     PGDATA=${PG_HOME}/data
 
-COPY lib/* ${PG_LIB}/
+COPY postgresql ${PG_LIB}
 
 VOLUME ${PG_HOME}
 
