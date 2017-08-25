@@ -4,7 +4,16 @@
 psql \
     -h ${PG_HOST} \
     -p ${PG_PORT} \
-    -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${PG_USER_HEALTHCHECK}') THEN CREATE ROLE ${PG_USER_HEALTHCHECK} LOGIN; CREATE DATABASE ${PG_USER_HEALTHCHECK}; END IF; END \$\$"
+    -tc "SELECT 1 FROM pg_roles WHERE rolname = '${PG_USER_HEALTHCHECK}'" \
+    | grep -q 1 \
+    || createuser ${PG_USER_HEALTHCHECK}
+
+psql \
+    -h ${PG_HOST} \
+    -p ${PG_PORT} \
+    -tc "SELECT 1 FROM pg_database WHERE datname = '${PG_USER_HEALTHCHECK}'" \
+    | grep -q 1 \
+    || createdb ${PG_USER_HEALTHCHECK}
 
 psql \
     -h ${PG_HOST} \
