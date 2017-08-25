@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+postgres \
+    -D ${PGDATA} \
+    -h ${PG_HOST} \
+    -p ${PG_PORT} \
+    -c gtm_host=${PG_GTM_HOST} \
+    -c gtm_port=${PG_GTM_PORT} \
+    --datanode

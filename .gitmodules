@@ -1,0 +1,3 @@
+[submodule "lib/postgres-xl"]
+	path = lib/postgres-xl
+	url = git://git.postgresql.org/git/postgres-xl.git

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+curl -fs http://${PG_HOST}:${PG_PORT} || false

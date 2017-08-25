@@ -1,0 +1,20 @@
+platform: linux
+inputs:
+  - name: meta
+outputs:
+  - name: pkg
+run:
+  user: root
+  path: sh
+  args:
+    - -ce
+    - |
+      src=/var/lib/postgresql
+      postgresql=/usr/local/lib/postgresql
+      ci=$src/ci
+      pkg=$PWD/pkg
+      
+      cp $ci/* $pkg
+      cp -R $postgresql $pkg/postgresql/
+      
+      ls -AlhR $pkg

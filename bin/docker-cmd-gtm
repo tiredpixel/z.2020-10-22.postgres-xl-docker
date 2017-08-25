@@ -1,0 +1,9 @@
+#!/bin/sh
+
+
+gtm \
+    -D ${PGDATA} \
+    -h ${PG_HOST} \
+    -n ${PG_NODE} \
+    -p ${PG_PORT} \
+    -l /dev/stdout
