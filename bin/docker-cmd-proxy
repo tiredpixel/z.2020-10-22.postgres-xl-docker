@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-gtm_proxy \
+exec gtm_proxy \
     -D ${PGDATA} \
     -h ${PG_HOST} \
     -p ${PG_PORT} \
