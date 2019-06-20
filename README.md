@@ -24,6 +24,16 @@ possible to boot an entire Postgres-XL cluster using these instructions. For
 running on Docker Swarm, you'll likely have to make minor tweaks. Please wave if
 something isn't clear or you have questions when doing this.
 
+It seems some people think that the way to use Postgres-XL Docker is to build it
+themselves from the Compose file. This is not the case; the images are published
+to Docker Hub, and those should normally be used instead. There's no need to
+compile this locally, unless you actually want to develop Postgres-XL Docker
+(or possibly Postgres-XL) itself. The supplied `docker-compose.image.yml`
+provides an example of how to do this; however, note that the `latest` tag is
+for testing and caching only; if you install a production database using
+`latest` or no tag at all, then you are doing it wrong, and your production
+will break at some point in the future. You have been warned. :)
+
 Note that the `pg_hba.conf` written is wide-open for any user on the backend
 network; if you use this method, be sure that you trust all users on that
 network, and isolate client connections using a frontend network. Alternatively,
