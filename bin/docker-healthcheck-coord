@@ -18,5 +18,22 @@ psql \
     -h "${PG_HOST}" \
     -p "${PG_PORT}" \
     -U "${PG_USER_HEALTHCHECK}" \
-    -c 'SELECT version()' ||
+    -tc "SELECT * FROM pg_tables WHERE
+        (schemaname, tablename, tableowner) =
+            ('public', 'ping', '${PG_USER_HEALTHCHECK}')" |
+        wc -l |
+        grep -q 2 ||
+        psql \
+            -h "${PG_HOST}" \
+            -p "${PG_PORT}" \
+            -U "${PG_USER_HEALTHCHECK}" \
+            -d "${PG_USER_HEALTHCHECK}" \
+            -c 'CREATE TABLE ping (t_ins timestamptz NOT NULL DEFAULT now())'
+
+psql \
+    -h "${PG_HOST}" \
+    -p "${PG_PORT}" \
+    -U "${PG_USER_HEALTHCHECK}" \
+    -d "${PG_USER_HEALTHCHECK}" \
+    -c 'INSERT INTO ping VALUES (DEFAULT)' ||
         false
