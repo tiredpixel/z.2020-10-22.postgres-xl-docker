@@ -145,7 +145,7 @@ SELECT * FROM pgxc_node;
 ## Testing
 
 Test the cluster using the instructions provided in
-<http://files.postgres-xl.org/documentation/tutorial-createcluster.html>.
+<https://www.postgres-xl.org/documentation/tutorial-createcluster.html>.
 
 For example, based on those instructions:
 
