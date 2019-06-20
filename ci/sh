@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+USER=postgres
+
+chown -R ${USER}:root /tmp/build
+
+setuidgid ${USER} "$@"
