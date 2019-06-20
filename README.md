@@ -1,8 +1,8 @@
 # Postgres-XL Docker
 
 Postgres-XL Docker is a Docker image source for
-[Postgres-XL](http://www.postgres-xl.org/), the scalable open-source
-PostgreSQL-based database cluster. The images are based on CentOS.
+[Postgres-XL](https://www.postgres-xl.org/), the scalable open-source
+PostgreSQL-based database cluster. The images are based on Debian.
 
 The images allow for arbitrary database cluster topologies, allowing GTM,
 GTM Proxy, Coordinator, and Datanode nodes to be created and added as desired.
