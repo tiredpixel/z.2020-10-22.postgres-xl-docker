@@ -1,0 +1,12 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: concourse/buildroot
+    tag: git
+inputs:
+  - name: src
+outputs:
+  - name: meta
+run:
+  path: src/ci/meta.sh
