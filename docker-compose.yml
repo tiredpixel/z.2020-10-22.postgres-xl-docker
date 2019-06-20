@@ -19,7 +19,6 @@ services:
       - PG_GTM_HOST=db_gtm_1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
-      - PG_NET_CLUSTER_A
       - PG_NODE=coord_1
       - PG_PORT=5432
     build: .
@@ -39,7 +38,6 @@ services:
       - PG_GTM_HOST=db_gtm_1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
-      - PG_NET_CLUSTER_A
       - PG_NODE=coord_2
       - PG_PORT=5432
     build: .
@@ -59,7 +57,6 @@ services:
       - PG_GTM_HOST=db_gtm_1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
-      - PG_NET_CLUSTER_A
       - PG_NODE=data_1
       - PG_PORT=5432
     build: .
@@ -78,7 +75,6 @@ services:
       - PG_GTM_HOST=db_gtm_1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
-      - PG_NET_CLUSTER_A
       - PG_NODE=data_2
       - PG_PORT=5432
     build: .
@@ -99,13 +95,5 @@ volumes:
   db_data_1: {}
   db_data_2: {}
 networks:
-  db_a:
-    ipam:
-      config:
-        -
-          subnet: ${PG_NET_CLUSTER_A}
-  db_b:
-    ipam:
-      config:
-        -
-          subnet: ${PG_NET_CLUSTER_B}
+  db_a: {}
+  db_b: {}

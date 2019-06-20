@@ -64,8 +64,6 @@ Other topologies are possible; you likely only need to edit
 
 ## Build
 
-Create a `.env` file from exampled `.env.example`.
-
 Edit `docker-compose.yml` to reflect the desired topology.
 
 Build services by bringing them up.
@@ -75,12 +73,6 @@ docker-compose up
 ```
 
 This will create backend (`db_a`) and frontend (`db_b`) networks.
-Extract the network address of the backend network, and add it to `.env` as
-`PG_NET_CLUSTER_A`, using the helper script:
-
-```sh
-bin/get-PG_NET_CLUSTER_A.sh
-```
 
 
 ## Clustering (Automatically)
