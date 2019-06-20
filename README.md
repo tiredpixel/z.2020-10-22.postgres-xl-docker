@@ -13,10 +13,7 @@ Previously, Postgres-XL Docker used pgxc_ctl for initialisation and control,
 running SSH servers as well as database services. This has now been completely
 redesigned to run database services directly without SSH, initialising using
 included helper scripts, and allowing full flexibility with regard to cluster
-topologies.
-
-The pgxc_ctl binary continues to be compiled and provided in the image in case
-people find it useful, but this might change in the future, since the up-to-date
+topologies. The pgxc_ctl binary is no longer included in the image, since the
 recommended Postgres-XL Docker workflow is to *not* use it.
 
 
