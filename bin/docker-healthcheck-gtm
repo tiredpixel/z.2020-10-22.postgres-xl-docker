@@ -1,4 +1,3 @@
-#!/bin/sh
+#!/bin/sh -eu
 
-
-curl -fs http://${PG_HOST}:${PG_PORT} || false
+curl -fs "${PG_HOST}:${PG_PORT}" || false

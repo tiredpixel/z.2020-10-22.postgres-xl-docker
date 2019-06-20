@@ -1,23 +1,22 @@
-#!/bin/sh
-
-
-psql \
-    -h ${PG_HOST} \
-    -p ${PG_PORT} \
-    -tc "SELECT 1 FROM pg_roles WHERE rolname = '${PG_USER_HEALTHCHECK}'" \
-    | grep -q 1 \
-    || createuser ${PG_USER_HEALTHCHECK}
+#!/bin/sh -eu
 
 psql \
-    -h ${PG_HOST} \
-    -p ${PG_PORT} \
-    -tc "SELECT 1 FROM pg_database WHERE datname = '${PG_USER_HEALTHCHECK}'" \
-    | grep -q 1 \
-    || createdb ${PG_USER_HEALTHCHECK}
+    -h "${PG_HOST}" \
+    -p "${PG_PORT}" \
+    -tc "SELECT 1 FROM pg_roles WHERE rolname = '${PG_USER_HEALTHCHECK}'" |
+        grep -q 1 ||
+        createuser "${PG_USER_HEALTHCHECK}"
 
 psql \
-    -h ${PG_HOST} \
-    -p ${PG_PORT} \
-    -U ${PG_USER_HEALTHCHECK} \
-    -c 'SELECT version()' \
-    || false
+    -h "${PG_HOST}" \
+    -p "${PG_PORT}" \
+    -tc "SELECT 1 FROM pg_database WHERE datname = '${PG_USER_HEALTHCHECK}'" |
+        grep -q 1 ||
+        createdb "${PG_USER_HEALTHCHECK}"
+
+psql \
+    -h "${PG_HOST}" \
+    -p "${PG_PORT}" \
+    -U "${PG_USER_HEALTHCHECK}" \
+    -c 'SELECT version()' ||
+        false

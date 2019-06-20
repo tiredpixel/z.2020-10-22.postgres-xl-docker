@@ -1,41 +1,55 @@
-#!/bin/sh
+#!/bin/bash -u
 
+nodes=(db_coord_1 db_coord_2 db_data_1 db_data_2)
+#-------------------------------------------------------------------------------
+function log() {
+    local msg="$*"
+    
+    echo "$(date -Is), $msg"
+}
 
-sqls=( \
-    "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);" \
-    "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);" \
-    "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);" \
-    "CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);" \
-    "ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);" \
-    "ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);" \
-    "ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);" \
-    "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);" \
-    "SELECT pgxc_pool_reload();" \
-    "SELECT * FROM pgxc_node;" \
-    )
+function startup() {
+    log "========================================"
+}
 
+function shutdown() {
+    log "----------------------------------------"
+}
 
-nodes=( \
-    db_coord_1 \
-    db_coord_2 \
-    db_data_1 \
-    db_data_2 \
-    )
+function srv () {
+    local node=$1
+    shift
+    
+    docker-compose exec "$node" "$@"
+}
+
+function cmd () {
+    local node=$1
+    shift
+    
+    log "$@"
+    srv "$node" psql -c "$@"
+}
+
+trap shutdown EXIT
+#-------------------------------------------------------------------------------
+startup
 
 for node in "${nodes[@]}"
 do
-    echo "================================================================================"
-    echo $node
-    echo
-    docker-compose start $node
+    docker-compose start "$node"
     
-    for sql in "${sqls[@]}"
-    do
-        echo $sql
-        docker-compose exec $node psql -c "$sql"
-    done
+    cmd "$node" "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
+    cmd "$node" "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
+    cmd "$node" "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"
+    cmd "$node" "CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);"
+    cmd "$node" "ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
+    cmd "$node" "ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
+    cmd "$node" "ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"
+    cmd "$node" "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);"
+    cmd "$node" "SELECT pgxc_pool_reload();"
+    cmd "$node" "SELECT * FROM pgxc_node;"
     
-    docker-compose stop $node
-    docker-compose start $node
-    echo "================================================================================"
+    docker-compose stop "$node"
+    docker-compose start "$node"
 done
