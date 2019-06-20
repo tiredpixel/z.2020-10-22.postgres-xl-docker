@@ -19,10 +19,6 @@ The pgxc_ctl binary continues to be compiled and provided in the image in case
 people find it useful, but this might change in the future, since the up-to-date
 recommended Postgres-XL Docker workflow is to *not* use it.
 
-Build cluster time and large-scale performance and stability testing is donated
-by my company, *Pavouk OÜ* (Estonia, UK). Patches are tested internally, and
-made available to the community open-source. <3
-
 
 ## Usage
 
@@ -177,8 +173,18 @@ SELECT xc_node_id, count(*) FROM repltab GROUP BY xc_node_id;
 May you find peace, and help others to do likewise.
 
 
+## Contact
+
+We've tried to make this document clear and accessible. If you have any feedback
+about how we could improve it, or if there's any part of it you'd like to
+discuss or clarify, we'd love to hear from you. Our contact details are:
+
+Pavouk OÜ | <https://www.pavouk.tech/> | <mailto:en@pavouk.tech>
+
+
 ## Licence
 
-Copyright © 2016-2017 [tiredpixel](https://www.tiredpixel.com/).
-It is free software, released under the MIT License, and may be redistributed
-under the terms specified in `LICENSE.txt`.
+Copyright © 2016-2019 [tiredpixel](https://www.tiredpixel.com/),
+[Pavouk OÜ](https://www.pavouk.tech/).
+It is free software, released under the MIT licence, and may be redistributed
+under the terms specified in `LICENSE`.
