@@ -95,5 +95,7 @@ volumes:
   db_data_1: {}
   db_data_2: {}
 networks:
-  db_a: {}
-  db_b: {}
+  db_a:
+    internal: true
+  db_b:
+    internal: true
