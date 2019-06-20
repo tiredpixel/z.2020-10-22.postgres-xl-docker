@@ -1,9 +1,8 @@
-#!/bin/sh
-
+#!/bin/sh -eu
 
 psql \
-    -h ${PG_HOST} \
-    -p ${PG_PORT} \
-    -U ${PG_USER_HEALTHCHECK} \
-    -c 'SELECT version()' \
-    || false
+    -h "${PG_HOST}" \
+    -p "${PG_PORT}" \
+    -U "${PG_USER_HEALTHCHECK}" \
+    -c 'SELECT version()' ||
+        false

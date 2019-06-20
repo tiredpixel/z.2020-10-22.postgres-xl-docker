@@ -5,7 +5,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=gtm_1
       - PG_PORT=6666
-    build: .
+    image: pavouk0/postgres-xl:latest
     command: docker-cmd-gtm
     entrypoint: docker-entrypoint-gtm
     volumes:
@@ -21,7 +21,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_1
       - PG_PORT=5432
-    build: .
+    image: pavouk0/postgres-xl:latest
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -40,7 +40,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_2
       - PG_PORT=5432
-    build: .
+    image: pavouk0/postgres-xl:latest
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -59,7 +59,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=data_1
       - PG_PORT=5432
-    build: .
+    image: pavouk0/postgres-xl:latest
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     depends_on:
@@ -77,7 +77,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=data_2
       - PG_PORT=5432
-    build: .
+    image: pavouk0/postgres-xl:latest
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     depends_on:

@@ -1,11 +1,18 @@
-#!/bin/sh
-set -e
+#!/bin/bash -eu
 
 initdb \
-    -D ${PGDATA} \
-    --nodename=${PG_NODE}
+    -D "${PGDATA}" \
+    --nodename="${PG_NODE}"
 
-echo "pg_hba: adding host trust ${PG_NET_CLUSTER_A}"
+nets=($(ip -o -f inet addr show | awk '/scope global/ {print $4}' |
+    sort -V | xargs))
 
-echo "host	all	all	${PG_NET_CLUSTER_A}	trust" >> \
-    ${PGDATA}/pg_hba.conf
+echo "pg_hba: adding host trust ${nets[0]}"
+
+echo "host	all	all	${nets[0]}	trust" >> \
+    "${PGDATA}/pg_hba.conf"
+
+echo "pg_hba: adding host md5 ${nets[1]}"
+
+echo "host	all	all	${nets[1]}	md5" >> \
+    "${PGDATA}/pg_hba.conf"

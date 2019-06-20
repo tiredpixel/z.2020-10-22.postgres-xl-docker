@@ -1,8 +1,8 @@
 # Postgres-XL Docker
 
 Postgres-XL Docker is a Docker image source for
-[Postgres-XL](http://www.postgres-xl.org/), the scalable open-source
-PostgreSQL-based database cluster. The images are based on CentOS.
+[Postgres-XL](https://www.postgres-xl.org/), the scalable open-source
+PostgreSQL-based database cluster. The images are based on Debian.
 
 The images allow for arbitrary database cluster topologies, allowing GTM,
 GTM Proxy, Coordinator, and Datanode nodes to be created and added as desired.
@@ -13,15 +13,8 @@ Previously, Postgres-XL Docker used pgxc_ctl for initialisation and control,
 running SSH servers as well as database services. This has now been completely
 redesigned to run database services directly without SSH, initialising using
 included helper scripts, and allowing full flexibility with regard to cluster
-topologies.
-
-The pgxc_ctl binary continues to be compiled and provided in the image in case
-people find it useful, but this might change in the future, since the up-to-date
+topologies. The pgxc_ctl binary is no longer included in the image, since the
 recommended Postgres-XL Docker workflow is to *not* use it.
-
-Build cluster time and large-scale performance and stability testing is donated
-by my company, *Pavouk OÜ* (Estonia, UK). Patches are tested internally, and
-made available to the community open-source. <3
 
 
 ## Usage
@@ -30,6 +23,16 @@ Instructions are for running on Docker using Docker Compose. It should be
 possible to boot an entire Postgres-XL cluster using these instructions. For
 running on Docker Swarm, you'll likely have to make minor tweaks. Please wave if
 something isn't clear or you have questions when doing this.
+
+It seems some people think that the way to use Postgres-XL Docker is to build it
+themselves from the Compose file. This is not the case; the images are published
+to Docker Hub, and those should normally be used instead. There's no need to
+compile this locally, unless you actually want to develop Postgres-XL Docker
+(or possibly Postgres-XL) itself. The supplied `docker-compose.image.yml`
+provides an example of how to do this; however, note that the `latest` tag is
+for testing and caching only; if you install a production database using
+`latest` or no tag at all, then you are doing it wrong, and your production
+will break at some point in the future. You have been warned. :)
 
 Note that the `pg_hba.conf` written is wide-open for any user on the backend
 network; if you use this method, be sure that you trust all users on that
@@ -71,8 +74,6 @@ Other topologies are possible; you likely only need to edit
 
 ## Build
 
-Create a `.env` file from exampled `.env.example`.
-
 Edit `docker-compose.yml` to reflect the desired topology.
 
 Build services by bringing them up.
@@ -82,12 +83,6 @@ docker-compose up
 ```
 
 This will create backend (`db_a`) and frontend (`db_b`) networks.
-Extract the network address of the backend network, and add it to `.env` as
-`PG_NET_CLUSTER_A`, using the helper script:
-
-```sh
-bin/get-PG_NET_CLUSTER_A.sh
-```
 
 
 ## Clustering (Automatically)
@@ -152,7 +147,7 @@ SELECT * FROM pgxc_node;
 ## Testing
 
 Test the cluster using the instructions provided in
-<http://files.postgres-xl.org/documentation/tutorial-createcluster.html>.
+<https://www.postgres-xl.org/documentation/tutorial-createcluster.html>.
 
 For example, based on those instructions:
 
@@ -177,8 +172,18 @@ SELECT xc_node_id, count(*) FROM repltab GROUP BY xc_node_id;
 May you find peace, and help others to do likewise.
 
 
+## Contact
+
+We've tried to make this document clear and accessible. If you have any feedback
+about how we could improve it, or if there's any part of it you'd like to
+discuss or clarify, we'd love to hear from you. Our contact details are:
+
+Pavouk OÜ | <https://www.pavouk.tech/> | <mailto:en@pavouk.tech>
+
+
 ## Licence
 
-Copyright © 2016-2017 [tiredpixel](https://www.tiredpixel.com/).
-It is free software, released under the MIT License, and may be redistributed
-under the terms specified in `LICENSE.txt`.
+Copyright © 2016-2019 [tiredpixel](https://www.tiredpixel.com/),
+[Pavouk OÜ](https://www.pavouk.tech/).
+It is free software, released under the MIT licence, and may be redistributed
+under the terms specified in `LICENSE`.

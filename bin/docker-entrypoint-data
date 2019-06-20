@@ -1,7 +1,5 @@
-#!/bin/sh
-set -e
+#!/bin/sh -eu
 
-
-test -d $PGDATA || docker-init-data
+test -d "$PGDATA" || docker-init-data
 
 exec "$@"

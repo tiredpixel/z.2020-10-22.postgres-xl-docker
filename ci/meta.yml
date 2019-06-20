@@ -9,11 +9,4 @@ inputs:
 outputs:
   - name: meta
 run:
-  path: sh
-  args:
-    - -ce
-    - |
-      meta=$PWD/meta
-      cd src
-      git describe | tr -d '\n' > $meta/version
-      cat $meta/*
+  path: src/ci/meta.sh
