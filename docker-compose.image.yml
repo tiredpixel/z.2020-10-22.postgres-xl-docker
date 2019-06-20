@@ -1,0 +1,99 @@
+version: "3"
+services:
+  db_gtm_1:
+    environment:
+      - PG_HOST=0.0.0.0
+      - PG_NODE=gtm_1
+      - PG_PORT=6666
+    image: 830756441711.dkr.ecr.eu-west-1.amazonaws.com/postgres-xl:XL9_5_STABLE-794-ged34d4e-1-g09cc221
+    command: docker-cmd-gtm
+    entrypoint: docker-entrypoint-gtm
+    volumes:
+      - db_gtm_1:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-gtm"]
+  db_coord_1:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=coord_1
+      - PG_PORT=5432
+    image: 830756441711.dkr.ecr.eu-west-1.amazonaws.com/postgres-xl:XL9_5_STABLE-794-ged34d4e-1-g09cc221
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
+    volumes:
+      - db_coord_1:/var/lib/postgresql
+    depends_on:
+      - db_gtm_1
+    networks:
+      - db_a
+      - db_b
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-coord"]
+  db_coord_2:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=coord_2
+      - PG_PORT=5432
+    image: 830756441711.dkr.ecr.eu-west-1.amazonaws.com/postgres-xl:XL9_5_STABLE-794-ged34d4e-1-g09cc221
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
+    volumes:
+      - db_coord_2:/var/lib/postgresql
+    depends_on:
+      - db_gtm_1
+    networks:
+      - db_a
+      - db_b
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-coord"]
+  db_data_1:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=data_1
+      - PG_PORT=5432
+    image: 830756441711.dkr.ecr.eu-west-1.amazonaws.com/postgres-xl:XL9_5_STABLE-794-ged34d4e-1-g09cc221
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
+    depends_on:
+      - db_gtm_1
+    volumes:
+      - db_data_1:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-data"]
+  db_data_2:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=data_2
+      - PG_PORT=5432
+    image: 830756441711.dkr.ecr.eu-west-1.amazonaws.com/postgres-xl:XL9_5_STABLE-794-ged34d4e-1-g09cc221
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
+    depends_on:
+      - db_gtm_1
+    volumes:
+      - db_data_2:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-data"]
+volumes:
+  db_gtm_1: {}
+  db_coord_1: {}
+  db_coord_2: {}
+  db_data_1: {}
+  db_data_2: {}
+networks:
+  db_a: {}
+  db_b: {}
