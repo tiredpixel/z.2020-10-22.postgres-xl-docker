@@ -1,0 +1,34 @@
+#!/bin/bash -u
+
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+STACK_NAME=$1; shift
+
+NODES=(db_coord_1 db_coord_2 db_data_1 db_data_2)
+SQL_STATMENTS=(
+"CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = '${STACK_NAME[@]}_db_coord_1', PORT = 5432);"
+"CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = '${STACK_NAME[@]}_db_coord_2', PORT = 5432);"
+"CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = '${STACK_NAME[@]}_db_data_1',  PORT = 5432);"
+"CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = '${STACK_NAME[@]}_db_data_2',  PORT = 5432);"
+"ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = '${STACK_NAME[@]}_db_coord_1', PORT = 5432);"
+"ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = '${STACK_NAME[@]}_db_coord_2', PORT = 5432);"
+"ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = '${STACK_NAME[@]}_db_data_1',  PORT = 5432);"
+"ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = '${STACK_NAME[@]}_db_data_2',  PORT = 5432);"
+"SELECT pgxc_pool_reload();"
+"SELECT * FROM pgxc_node;"
+)
+
+for NODE in "${NODES[@]}"
+do
+
+    echo -e "${RED} Running SQL For ${STACK_NAME[@]}_${NODE[@]} ${NC}"
+
+    for SQL in "${SQL_STATMENTS[@]}"
+    do
+        echo -e "${BLUE} ./execute-service ${STACK_NAME[@]}_${NODE[@]} psql -c \"${SQL[@]}\" ${NC}"
+        ./execute-service ${STACK_NAME[@]}_${NODE[@]} psql -c "${SQL[@]}"
+    done
+
+done
