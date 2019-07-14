@@ -96,6 +96,27 @@ bin/init-eg
 ```
 
 
+## Clustering (Swarm; Automatically)
+
+If you're running on Docker Swarm, you can use the provided example
+`docker-compose.swarm.yml` as a starting point, deploying with
+`docker stack deploy`, along with the init script. Note that the example makes
+various assumptions, such as that the Swarm node is a manager, that it is tagged
+with `grp=dbxl`, and that `db_a` has a lower subnet than `db_b` (which might or
+might not happen automatically; create the networks manually, if you're having
+trouble).
+
+```sh
+bin/init-eg-swarm STACK_NAME
+```
+
+Note there are various caveats to using this, which you can read about in detail
+here:
+
+- https://github.com/pavouk-0/postgres-xl-docker/issues/27
+- https://github.com/pavouk-0/postgres-xl-docker/pull/28
+
+
 ## Clustering (Manually)
 
 Prepare a clustering query, able to be executed on each node. Simplest is to use

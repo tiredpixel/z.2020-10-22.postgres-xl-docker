@@ -1,0 +1,92 @@
+#!/bin/bash -u
+
+stack=$1
+
+nodes=(db_coord_1 db_coord_2 db_data_1 db_data_2)
+PG_USER_HEALTHCHECK=_healthcheck
+#-------------------------------------------------------------------------------
+function log() {
+    local msg="$*"
+    
+    echo "$(date -Is), $msg"
+}
+
+function startup() {
+    log "========================================"
+}
+
+function shutdown() {
+    log "----------------------------------------"
+}
+
+function srv() {
+    local node=$1
+    shift
+    
+    docker exec "$node" "$@"
+}
+
+function cmd() {
+    local node=$1
+    shift
+    
+    log "$@"
+    srv "$node" psql -c "$@"
+}
+
+function get_container() {
+    local node=$1
+    
+    id=$(docker service ps -f 'desired-state=running' -q "${stack}_${node}" |
+        head -n1)
+    echo "${stack}_${node}.1.${id}"
+}
+
+function get_healthcheck() {
+    local node=$1
+    
+    docker service inspect "${stack}_${node}" \
+        -f '{{ index .Spec.TaskTemplate.ContainerSpec.Healthcheck.Test 1 }}'
+}
+
+trap shutdown EXIT
+#-------------------------------------------------------------------------------
+startup
+
+for node in "${nodes[@]}" ; do
+    ctnr=$(get_container "$node")
+    
+    cmd "$ctnr" "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);"
+    cmd "$ctnr" "SELECT pgxc_pool_reload();"
+    cmd "$ctnr" "SELECT * FROM pgxc_node;"
+done
+
+for node in "${nodes[@]}" ; do
+    healthcheck=$(get_healthcheck "$node")
+    
+    docker service update "${stack}_${node}" \
+        --health-cmd "$healthcheck || true"
+done
+
+while true ; do
+    log "WAITING"
+    
+    for node in "${nodes[@]}" ; do
+        ctnr=$(get_container "$node")
+        
+        srv "$ctnr" psql -tc "SELECT 1 FROM pg_database
+            WHERE datname = '${PG_USER_HEALTHCHECK}'" |
+            grep -q 1 && break 2
+    done
+    
+    sleep 1
+done
+
+log "REDEPLOY stack now !" # to reset healthchecks, and reboot

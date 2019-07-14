@@ -1,0 +1,117 @@
+version: "3.7"
+services:
+  #-----------------------------------------------------------------------------
+  db_gtm_1:
+    environment:
+      - PG_HOST=0.0.0.0
+      - PG_NODE=gtm_1
+      - PG_PORT=6666
+    image: pavouk0/postgres-xl:latest # pin for prod !
+    command: docker-cmd-gtm
+    entrypoint: docker-entrypoint-gtm
+    volumes:
+      - db_gtm_1:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-gtm"]
+    deploy:
+      placement:
+        constraints:
+          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  db_coord_1:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=coord_1
+      - PG_PORT=5432
+    image: pavouk0/postgres-xl:latest # pin for prod !
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
+    volumes:
+      - db_coord_1:/var/lib/postgresql
+    networks:
+      - db_a
+      - db_b
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-coord"]
+    deploy:
+      placement:
+        constraints:
+          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  db_coord_2:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=coord_2
+      - PG_PORT=5432
+    image: pavouk0/postgres-xl:latest # pin for prod !
+    command: docker-cmd-coord
+    entrypoint: docker-entrypoint-coord
+    volumes:
+      - db_coord_2:/var/lib/postgresql
+    networks:
+      - db_a
+      - db_b
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-coord"]
+    deploy:
+      placement:
+        constraints:
+          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  db_data_1:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=data_1
+      - PG_PORT=5432
+    image: pavouk0/postgres-xl:latest # pin for prod !
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
+    volumes:
+      - db_data_1:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-data"]
+    deploy:
+      placement:
+        constraints:
+          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  db_data_2:
+    environment:
+      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_PORT=6666
+      - PG_HOST=0.0.0.0
+      - PG_NODE=data_2
+      - PG_PORT=5432
+    image: pavouk0/postgres-xl:latest # pin for prod !
+    command: docker-cmd-data
+    entrypoint: docker-entrypoint-data
+    volumes:
+      - db_data_2:/var/lib/postgresql
+    networks:
+      - db_a
+    healthcheck:
+      test: ["CMD", "docker-healthcheck-data"]
+    deploy:
+      placement:
+        constraints:
+          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  #-----------------------------------------------------------------------------
+volumes:
+  db_gtm_1: {}
+  db_coord_1: {}
+  db_coord_2: {}
+  db_data_1: {}
+  db_data_2: {}
+networks:
+  db_a:
+    driver: overlay
+    internal: true
+  db_b:
+    driver: overlay
+    internal: true
