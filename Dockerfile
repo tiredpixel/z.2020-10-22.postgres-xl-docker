@@ -6,7 +6,7 @@ ARG PG_LIB=/usr/local/lib/postgresql
 ARG PG_USER=postgres
 #-------------------------------------------------------------------------------
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
         bison \
         build-essential \
         daemontools \
