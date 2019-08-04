@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-test -d "$PGDATA" || docker-init-data
+test -d "$PGDATA" || docker-init-coord
 
 # replace subnet in case it has changed
 docker-reinit-coord
