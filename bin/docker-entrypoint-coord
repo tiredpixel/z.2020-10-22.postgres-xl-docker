@@ -3,7 +3,7 @@
 test -d "$PGDATA" || docker-init-data
 
 # replace subnet in case it has changed
-docker-reinit-data
+docker-reinit-coord
 # replace setup catalogue in case it has changed
 sleep 30 && init-eg-entrypoint &
 
