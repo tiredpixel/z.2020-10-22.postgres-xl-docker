@@ -1,32 +1,63 @@
 version: "3.7"
+#-----------------------------------------------------------------------------
+x-custom:
+  shared_env: &shared_env
+    PG_GTM_HOST: db_gtm_1
+    PG_GTM_PORT: 6666
+    PG_HOST: 0.0.0.0
+    PG_PORT: 5432
+    PG_NODES: "[
+    {\"name\":\"coord_1\",\"type\":\"coordinator\",\"host\":\"db_coord_1\",\"port\":5432},
+    {\"name\":\"coord_2\",\"type\":\"coordinator\",\"host\":\"db_coord_2\",\"port\":5432},
+    {\"name\":\"data_1\",\"type\":\"datanode\",\"host\":\"db_data_1\",\"port\":5432},
+    {\"name\":\"data_2\",\"type\":\"datanode\",\"host\":\"db_data_2\",\"port\":5432}
+    ]"
+    #    PG_CREDENTIALS: "{
+    #    \"superuserName\":\"postgres\",
+    #    \"superuserPassword\":\"your_password\",
+    #    \"replicationName\":\"replication\",
+    #    \"replicationPassword\":\"your_replication_password\"
+    #    }"
+    PG_SECRET_NAME: pg-credentials
+  shared_secrets: &shared_secrets
+    secrets:
+      - pg-credentials
+
+#-----------------------------------------------------------------------------
 services:
-  #-----------------------------------------------------------------------------
   db_gtm_1:
     environment:
-      - PG_HOST=0.0.0.0
-      - PG_NODE=gtm_1
-      - PG_PORT=6666
-    image: pavouk0/postgres-xl:latest # pin for prod !
+      PG_HOST: 0.0.0.0
+      PG_NODE: gtm_1
+      PG_PORT: 6666
+    #      PG_CREDENTIALS: "{
+    #      \"superuserName\":\"postgres\",
+    #      \"superuserPassword\":\"your_password\",
+    #      \"replicationName\":\"replication\",
+    #      \"replicationPassword\":\"your_replication_password\"
+    #      }"
+    <<: *shared_secrets
+    build: .
     command: docker-cmd-gtm
     entrypoint: docker-entrypoint-gtm
     volumes:
       - db_gtm_1:/var/lib/postgresql
     networks:
       - db_a
-    healthcheck:
-      test: ["CMD", "docker-healthcheck-gtm"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  #    healthcheck:
+  #      test: ["CMD", "docker-healthcheck-gtm"]
+  #      interval: 1m30s
+  #      timeout: 10s
+  #      retries: 3
+  #      start_period: 40s
   db_coord_1:
     environment:
-      - PG_GTM_HOST=db_gtm_1
-      - PG_GTM_PORT=6666
-      - PG_HOST=0.0.0.0
-      - PG_NODE=coord_1
-      - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+      <<: *shared_env
+      PG_NODE: coord_1
+    <<: *shared_secrets
+    build: .
+    ports:
+      - 5433:5432
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -34,20 +65,20 @@ services:
     networks:
       - db_a
       - db_b
-    healthcheck:
-      test: ["CMD", "docker-healthcheck-coord"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  #    healthcheck:
+  #      test: ["CMD", "docker-healthcheck-coord"]
+  #      interval: 1m30s
+  #      timeout: 10s
+  #      retries: 3
+  #      start_period: 40s
   db_coord_2:
     environment:
-      - PG_GTM_HOST=db_gtm_1
-      - PG_GTM_PORT=6666
-      - PG_HOST=0.0.0.0
-      - PG_NODE=coord_2
-      - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+      <<: *shared_env
+      PG_NODE: coord_2
+    <<: *shared_secrets
+    build: .
+    ports:
+      - 5434:5432
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -55,53 +86,49 @@ services:
     networks:
       - db_a
       - db_b
-    healthcheck:
-      test: ["CMD", "docker-healthcheck-coord"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  #    healthcheck:
+  #      test: ["CMD", "docker-healthcheck-coord"]
+  #      interval: 1m30s
+  #      timeout: 10s
+  #      retries: 3
+  #      start_period: 40s
   db_data_1:
     environment:
-      - PG_GTM_HOST=db_gtm_1
-      - PG_GTM_PORT=6666
-      - PG_HOST=0.0.0.0
-      - PG_NODE=data_1
-      - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+      <<: *shared_env
+      PG_NODE: data_1
+    <<: *shared_secrets
+    build: .
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
       - db_data_1:/var/lib/postgresql
     networks:
       - db_a
-    healthcheck:
-      test: ["CMD", "docker-healthcheck-data"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+  #    healthcheck:
+  #      test: ["CMD", "docker-healthcheck-data"]
+  #      interval: 1m30s
+  #      timeout: 10s
+  #      retries: 3
+  #      start_period: 40s
   db_data_2:
     environment:
-      - PG_GTM_HOST=db_gtm_1
-      - PG_GTM_PORT=6666
-      - PG_HOST=0.0.0.0
-      - PG_NODE=data_2
-      - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+      <<: *shared_env
+      PG_NODE: data_2
+    <<: *shared_secrets
+    build: .
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
       - db_data_2:/var/lib/postgresql
     networks:
       - db_a
-    healthcheck:
-      test: ["CMD", "docker-healthcheck-data"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  #-----------------------------------------------------------------------------
+#    healthcheck:
+#      test: ["CMD", "docker-healthcheck-data"]
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
+#-----------------------------------------------------------------------------
 volumes:
   db_gtm_1: {}
   db_coord_1: {}
@@ -115,3 +142,6 @@ networks:
   db_b:
     driver: overlay
     internal: true
+secrets:
+  pg-credentials:
+    external: true

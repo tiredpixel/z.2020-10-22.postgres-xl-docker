@@ -9,10 +9,10 @@ nets=($(ip -o -f inet addr show | awk '/scope global/ {print $4}' |
 
 echo "pg_hba: adding host trust ${nets[0]}"
 
-echo "host	all	all	${nets[0]}	trust" >> \
+echo "host	all	all	${nets[0]}	trust #added for postgresxl datanodes" >> \
     "${PGDATA}/pg_hba.conf"
 
 echo "pg_hba: adding host md5 ${nets[1]}"
 
-echo "host	all	all	${nets[1]}	md5" >> \
+echo "host	all	all	${nets[1]}	md5 #added for postgresxl coordinators" >> \
     "${PGDATA}/pg_hba.conf"

@@ -13,7 +13,8 @@ RUN apt-get update && \
         flex \
         libreadline-dev \
         netcat \
-        zlib1g-dev && \
+        zlib1g-dev \
+        jq && \
     rm -rf /var/lib/apt/lists/*
 
 RUN useradd ${PG_USER} -d ${PG_HOME} && \

@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+nets=($(ip -o -f inet addr show | awk '/scope global/ {print $4}' |
+    sort -V | xargs))
+
+sed -i "s|.*#added for postgresxl datanodes*|host    all     all     ${nets[0]}   trust #added for postgresxl datanodes|" "${PGDATA}/pg_hba.conf"
+sed -i "s|.*#added for postgresxl coordinators*|host    all     all     ${nets[1]}    md5 #added for postgresxl coordinators|" "${PGDATA}/pg_hba.conf"

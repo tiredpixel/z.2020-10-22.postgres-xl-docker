@@ -1,0 +1,49 @@
+#!/bin/sh -eu
+
+#-----------------------------------------------------------------------------
+# REMOVE OLD POSTGRES XL NODES
+OLD_PG_NODES="$(psql -t -c "SELECT node_name FROM pgxc_node;")"
+
+for NODE in ${OLD_PG_NODES}
+do
+        psql -c "DROP NODE ${NODE}" || true
+done
+#-----------------------------------------------------------------------------
+# CREATE NEW POSTGRES XL NODES
+for row in $(echo "${PG_NODES}" | jq -r '.[] | @base64'); do
+        _jq() {
+                echo ${row} | base64 --decode | jq -r ${1}
+        }
+
+        psql -c "CREATE NODE $(_jq '.name') WITH (TYPE = '$(_jq '.type')', HOST = '$(_jq '.host')', PORT = $(_jq '.port'));" || true
+        psql -c "ALTER NODE $(_jq '.name') WITH (TYPE = '$(_jq '.type')', HOST = '$(_jq '.host')', PORT = $(_jq '.port'));" || true
+done
+#-----------------------------------------------------------------------------
+# RELOAD POSTGRES XL NODES
+psql -c "SELECT pgxc_pool_reload();" || true
+#-----------------------------------------------------------------------------
+sleep 5
+# GET CREDENTIALS FOR USERS
+FINAL_CREDENTIALS="{}"
+if [ ${PG_SECRET_NAME+"false"} ]
+then
+        FINAL_CREDENTIALS=$(cat /run/secrets/$PG_SECRET_NAME)
+else
+        if [ ${PG_CREDENTIALS+"false"} ]
+        then
+                FINAL_CREDENTIALS=$PG_CREDENTIALS
+        fi
+fi
+#-----------------------------------------------------------------------------
+# CREATE AND UPDATE CREDENTIALS FOR SUPERUSER
+SUPERUSER_NAME=$(echo "$FINAL_CREDENTIALS" | jq -r '"\(.superuserName)"')
+SUPERUSER_PASSWORD=$(echo "$FINAL_CREDENTIALS" | jq -r '"\(.superuserPassword)"')
+psql -c "CREATE ROLE ${SUPERUSER_NAME} WITH SUPERUSER PASSWORD '${SUPERUSER_PASSWORD}' LOGIN;" || true
+psql -c "ALTER ROLE ${SUPERUSER_NAME}  WITH SUPERUSER PASSWORD '${SUPERUSER_PASSWORD}' LOGIN;" || true
+#-----------------------------------------------------------------------------
+# CREATE AND UPDATE CREDENTIALS FOR REPLICATION USER
+REPLICATION_NAME=$(echo "$FINAL_CREDENTIALS" | jq -r '"\(.replicationName)"')
+REPLICATION_PASSWORD=$(echo "$FINAL_CREDENTIALS" | jq -r '"\(.replicationPassword)"')
+psql -c "CREATE ROLE ${REPLICATION_NAME} WITH SUPERUSER PASSWORD '${REPLICATION_PASSWORD}' LOGIN;" || true
+psql -c "ALTER ROLE ${REPLICATION_NAME}  WITH SUPERUSER PASSWORD '${REPLICATION_PASSWORD}' LOGIN;" || true
+#-----------------------------------------------------------------------------
