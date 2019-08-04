@@ -56,8 +56,6 @@ services:
       PG_NODE: coord_1
     <<: *shared_secrets
     build: .
-    ports:
-      - 5433:5432
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -77,8 +75,6 @@ services:
       PG_NODE: coord_2
     <<: *shared_secrets
     build: .
-    ports:
-      - 5434:5432
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
