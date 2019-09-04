@@ -1,3 +1,15 @@
-#!/bin/sh -eu
+#!/bin/bash -eu
 
-nc -z "${PG_HOST}" "${PG_PORT}"
+# This is a magic string, reverse-engineered by using tcpdump on the GTM to see
+# what is a minimal valid startup packet from a Datanode, and substituting bytes
+# into it with reference to the Postgres-XL source. Previously, although the
+# healthcheck succeeded and everything seemed to work, the GTM logged error
+# 
+#     Expecting a startup message, but received �
+# 
+# SEE: https://github.com/pavouk-0/postgres-xl-docker/issues/29
+# SEE: https://github.com/pavouk-0/postgres-xl-docker/issues/15
+# SEE: Postgres-XL source: src/gtm/main/main.c
+magic_string="\x41\x00\x00\x00\x50\x5f\x68\x65\x61\x6c\x74\x68\x63\x68\x65\x63\x6b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+printf "%b" "$magic_string" | nc -w 1 "${PG_HOST}" "${PG_PORT}" || false
