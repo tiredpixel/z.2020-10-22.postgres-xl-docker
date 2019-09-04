@@ -1,8 +1,13 @@
 #!/bin/sh -eu
 
-psql \
-    -h "${PG_HOST}" \
-    -p "${PG_PORT}" \
-    -U "${PG_USER_HEALTHCHECK}" \
-    -c 'SELECT version()' ||
-        false
+bootstrapped=.bootstrapped
+
+(
+    psql \
+        -h "${PG_HOST}" \
+        -p "${PG_PORT}" \
+        -U "${PG_USER_HEALTHCHECK}" \
+        -c 'SELECT version()' &&
+    touch "$bootstrapped"
+) ||
+[ ! -f "$bootstrapped" ]
