@@ -12,7 +12,6 @@ RUN apt-get update && \
         daemontools \
         flex \
         libreadline-dev \
-        netcat \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 
@@ -29,11 +28,15 @@ USER ${PG_USER}
 WORKDIR ${PG_HOME}/lib/postgres-xl
 
 RUN ./configure --prefix ${PG_LIB} && \
+    make && \
+    cd contrib/pgxc_monitor && \
     make
 #-------------------------------------------------------------------------------
 USER root
 
-RUN make install
+RUN make install && \
+    cd contrib/pgxc_monitor && \
+    make install
 #-------------------------------------------------------------------------------
 USER ${PG_USER}
 
