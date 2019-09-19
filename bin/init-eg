@@ -37,8 +37,6 @@ startup
 
 for node in "${nodes[@]}"
 do
-    docker-compose start "$node"
-    
     cmd "$node" "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
     cmd "$node" "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
     cmd "$node" "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"
@@ -49,7 +47,4 @@ do
     cmd "$node" "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db_data_2',  PORT = 5432);"
     cmd "$node" "SELECT pgxc_pool_reload();"
     cmd "$node" "SELECT * FROM pgxc_node;"
-    
-    docker-compose stop "$node"
-    docker-compose start "$node"
 done
