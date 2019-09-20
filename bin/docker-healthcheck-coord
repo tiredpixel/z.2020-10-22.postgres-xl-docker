@@ -3,9 +3,15 @@
 bootstrapped=.bootstrapped
 
 if [ ! -f "$bootstrapped" ]; then
-    createuser "${PG_USER_HEALTHCHECK}" || true
+    createuser \
+         -h "${PG_HOST}" \
+         -p "${PG_PORT}" \
+        "${PG_USER_HEALTHCHECK}" || true
     
-    createdb "${PG_USER_HEALTHCHECK}" || true
+    createdb \
+         -h "${PG_HOST}" \
+         -p "${PG_PORT}" \
+        "${PG_USER_HEALTHCHECK}" || true
     
     psql \
         -h "${PG_HOST}" \
