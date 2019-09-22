@@ -11,6 +11,7 @@ if [ ! -f "$bootstrapped" ]; then
     createdb \
          -h "${PG_HOST}" \
          -p "${PG_PORT}" \
+         -O "${PG_USER_HEALTHCHECK}" \
         "${PG_USER_HEALTHCHECK}" || true
     
     psql \
