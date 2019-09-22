@@ -48,6 +48,8 @@ Other topologies are possible; you likely only need to edit `docker-compose.yml`
 
 ## Build
 
+Clone repository.
+Pull source with `git submodule update --init --recursive`.
 Edit `docker-compose.yml` to reflect the desired topology.
 
 Build services by bringing them up.
