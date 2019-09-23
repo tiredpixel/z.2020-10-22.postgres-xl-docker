@@ -7,7 +7,8 @@ ARG PG_USER=postgres
 #-------------------------------------------------------------------------------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libreadline-dev && \
+        libreadline-dev \
+        netcat && \
     rm -rf /var/lib/apt/lists/*
 
 RUN useradd ${PG_USER} -d ${PG_HOME} && \

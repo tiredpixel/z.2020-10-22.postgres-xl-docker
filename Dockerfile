@@ -12,6 +12,7 @@ RUN apt-get update && \
         daemontools \
         flex \
         libreadline-dev \
+        netcat \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 
