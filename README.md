@@ -48,6 +48,8 @@ Other topologies are possible; you likely only need to edit `docker-compose.yml`
 
 ## Build
 
+Clone repository.
+Pull source with `git submodule update --init --recursive`.
 Edit `docker-compose.yml` to reflect the desired topology.
 
 Build services by bringing them up.
@@ -159,4 +161,8 @@ Pavouk OÜ | [https://www.pavouk.tech/](https://www.pavouk.tech/) | [en@pavouk.t
 
 ## Licence
 
-Copyright © 2016-2019 [tiredpixel](https://www.tiredpixel.com/), [Pavouk OÜ](https://www.pavouk.tech/). It is free software, released under the MIT licence, and may be redistributed under the terms specified in `LICENSE`.
+Copyright © 2016-2019
+[tiredpixel](https://www.tiredpixel.com/),
+[Pavouk OÜ](https://www.pavouk.tech/),
+and other [contributors](https://github.com/pavouk-0/postgres-xl-docker/graphs/contributors).
+It is free software, released under the MIT licence, and may be redistributed under the terms specified in `LICENSE`.

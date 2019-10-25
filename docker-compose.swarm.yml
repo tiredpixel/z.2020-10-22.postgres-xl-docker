@@ -1,4 +1,9 @@
 version: "3.7"
+
+x-custom:
+  shared_image: &shared_image
+    image: pavouk0/postgres-xl:XL_10_R1_1-313-g31dfe47
+
 services:
   #-----------------------------------------------------------------------------
   db_gtm_1:
@@ -6,7 +11,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=gtm_1
       - PG_PORT=6666
-    image: pavouk0/postgres-xl:latest # pin for prod !
+    <<: *shared_image
     command: docker-cmd-gtm
     entrypoint: docker-entrypoint-gtm
     volumes:
@@ -15,10 +20,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-gtm"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db_coord_1:
     environment:
       - PG_GTM_HOST=db_gtm_1
@@ -26,7 +31,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_1
       - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -36,10 +41,10 @@ services:
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db_coord_2:
     environment:
       - PG_GTM_HOST=db_gtm_1
@@ -47,7 +52,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_2
       - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -57,10 +62,10 @@ services:
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db_data_1:
     environment:
       - PG_GTM_HOST=db_gtm_1
@@ -68,7 +73,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=data_1
       - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
@@ -77,10 +82,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db_data_2:
     environment:
       - PG_GTM_HOST=db_gtm_1
@@ -88,7 +93,7 @@ services:
       - PG_HOST=0.0.0.0
       - PG_NODE=data_2
       - PG_PORT=5432
-    image: pavouk0/postgres-xl:latest # pin for prod !
+    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
@@ -97,10 +102,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
-    deploy:
-      placement:
-        constraints:
-          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   #-----------------------------------------------------------------------------
 volumes:
   db_gtm_1: {}
