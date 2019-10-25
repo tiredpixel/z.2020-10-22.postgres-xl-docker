@@ -1,11 +1,23 @@
-#!/bin/sh -eu
+#!/bin/bash -eu
 
 bootstrapped=.bootstrapped
-
+sleep_int_max=30
+#-------------------------------------------------------------------------------
 if [ ! -f "$bootstrapped" ]; then
-    createuser "${PG_USER_HEALTHCHECK}" || true
+    sleep_int=$(((RANDOM % sleep_int_max) + 1))
+    echo "Sleeping to avoid race-condition (!) [$sleep_int s]"
+    sleep "$sleep_int"
     
-    createdb "${PG_USER_HEALTHCHECK}" || true
+    createuser \
+         -h "${PG_HOST}" \
+         -p "${PG_PORT}" \
+        "${PG_USER_HEALTHCHECK}" || true
+    
+    createdb \
+         -h "${PG_HOST}" \
+         -p "${PG_PORT}" \
+         -O "${PG_USER_HEALTHCHECK}" \
+        "${PG_USER_HEALTHCHECK}" || true
     
     psql \
         -h "${PG_HOST}" \
