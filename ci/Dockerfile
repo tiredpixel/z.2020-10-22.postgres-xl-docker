@@ -8,6 +8,7 @@ ARG PG_USER=postgres
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libreadline-dev \
+        rsync \
         netcat && \
     rm -rf /var/lib/apt/lists/*
 
