@@ -4,8 +4,6 @@ set -o pipefail
 src=$PWD/src
 meta=$PWD/meta
 
-branch_latest=master
-
 test -d "$meta" || meta=$(mktemp -d)
 #-------------------------------------------------------------------------------
 cd "$src"
@@ -25,7 +23,7 @@ if [ "$version" == "$release" ]; then
     echo -n "$release $release_1.$release_2 $release_1 " >> "$meta/tags"
 fi
 
-commit_latest=$(git rev-parse "$branch_latest")
+commit_latest=$(git for-each-ref --sort=-committerdate --format="%(objectname)" refs/remotes/ | head -n1)
 commit_head=$(git rev-parse HEAD)
 
 if [ "$commit_head" == "$commit_latest" ]; then
