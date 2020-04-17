@@ -1,9 +1,7 @@
 version: "3.7"
-
 x-custom:
   shared_image: &shared_image
-    image: pavouk0/postgres-xl:XL_10_R1_1-313-g31dfe47
-
+    image: pavouk0/postgres-xl:XL_10_R1_1-313-g31dfe47-13-gbe4dce7
 services:
   db_gtm_1:
     environment:
