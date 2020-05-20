@@ -4,8 +4,8 @@ nodes=(db_coord_1 db_coord_2 db_data_1 db_data_2)
 #-------------------------------------------------------------------------------
 function log() {
     local msg="$*"
-    
-    echo "$(date -Is), $msg"
+
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%S%z'), $msg"
 }
 
 function startup() {
