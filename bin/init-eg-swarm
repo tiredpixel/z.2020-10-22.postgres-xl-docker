@@ -6,8 +6,8 @@ nodes=(db_coord_1 db_coord_2 db_data_1 db_data_2)
 #-------------------------------------------------------------------------------
 function log() {
     local msg="$*"
-    
-    echo "$(date -Is), $msg"
+
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%S%z'), $msg"
 }
 
 function startup() {
@@ -21,21 +21,21 @@ function shutdown() {
 function srv() {
     local node=$1
     shift
-    
+
     docker exec "$node" "$@"
 }
 
 function cmd() {
     local node=$1
     shift
-    
+
     log "$@"
     srv "$node" psql -c "$@"
 }
 
 function get_container() {
     local node=$1
-    
+
     id=$(docker service ps -f 'desired-state=running' -q "${stack}_${node}" |
         head -n1)
     echo "${stack}_${node}.1.${id}"
@@ -45,9 +45,10 @@ trap shutdown EXIT
 #-------------------------------------------------------------------------------
 startup
 
-for node in "${nodes[@]}" ; do
+for node in "${nodes[@]}"
+do
     ctnr=$(get_container "$node")
-    
+
     cmd "$ctnr" "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db_coord_1', PORT = 5432);"
     cmd "$ctnr" "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db_coord_2', PORT = 5432);"
     cmd "$ctnr" "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db_data_1',  PORT = 5432);"

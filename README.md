@@ -6,7 +6,6 @@ The images allow for arbitrary database cluster topologies, allowing GTM, GTM Pr
 
 Previously, Postgres-XL Docker used `pgxc_ctl` for initialisation and control, running SSH servers as well as database services. This has now been completely redesigned to run database services directly without SSH, initialising using included helper scripts, and allowing full flexibility with regard to cluster topologies. The `pgxc_ctl` binary is no longer included in the image, since the recommended Postgres-XL Docker workflow is to *not* use it.
 
-
 ## Usage
 
 Instructions are for running on Docker using Docker Compose. It should be possible to boot an entire Postgres-XL cluster using these instructions. For running on Docker Swarm, you'll likely have to make minor tweaks. Please wave if something isn't clear or you have questions when doing this.
@@ -45,7 +44,6 @@ These instructions, along with the provided `docker-compose.yml` file, create:
 
 Other topologies are possible; you likely only need to edit `docker-compose.yml`, potentially setting additional environment variables.
 
-
 ## Build
 
 Clone repository.
@@ -60,7 +58,6 @@ docker-compose up
 
 This will create backend (`db_a`) and frontend (`db_b`) networks.
 
-
 ## Clustering (Automatically)
 
 Prepare an example cluster locally, using the provided example init script. This is not designed for production. Instead, configure by hand using whichever orchestrator you use, or write your own scripts.
@@ -68,7 +65,6 @@ Prepare an example cluster locally, using the provided example init script. This
 ```sh
 bin/init-eg
 ```
-
 
 ## Clustering (Swarm; Automatically)
 
@@ -82,7 +78,6 @@ Note there are various caveats to using this, which you can read about in detail
 
 - https://github.com/pavouk-0/postgres-xl-docker/issues/27
 - https://github.com/pavouk-0/postgres-xl-docker/pull/28
-
 
 ## Clustering (Manually)
 
@@ -112,6 +107,7 @@ SELECT pgxc_pool_reload();
 ```
 
 On `coord_2`:
+
 ```sql
 ALTER NODE data_2 WITH (PRIMARY, PREFERRED);
 SELECT pgxc_pool_reload();
@@ -122,7 +118,6 @@ View the topologies on each node:
 ```sql
 SELECT * FROM pgxc_node;
 ```
-
 
 ## Testing
 
@@ -146,18 +141,15 @@ SELECT count(*) FROM repltab;
 SELECT xc_node_id, count(*) FROM repltab GROUP BY xc_node_id;
 ```
 
-
 ## Blessing
 
 May you find peace, and help others to do likewise.
-
 
 ## Contact
 
 We've tried to make this document clear and accessible. If you have any feedback about how we could improve it, or if there's any part of it you'd like to discuss or clarify, we'd love to hear from you. Our contact details are:
 
 Pavouk OÜ | [https://www.pavouk.tech/](https://www.pavouk.tech/) | [en@pavouk.tech](mailto:en@pavouk.tech)
-
 
 ## Licence
 
