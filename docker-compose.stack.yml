@@ -5,13 +5,12 @@ x-custom:
     image: pavouk0/postgres-xl:XL_10_R1_1-313-g31dfe47
 
 services:
-  #-----------------------------------------------------------------------------
   db-gtm-1:
+    <<: *shared_image
     environment:
       - PG_HOST=0.0.0.0
       - PG_NODE=gtm_1
       - PG_PORT=6666
-    <<: *shared_image
     command: docker-cmd-gtm
     entrypoint: docker-entrypoint-gtm
     volumes:
@@ -25,13 +24,13 @@ services:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db-coord-1:
+    <<: *shared_image
     environment:
       - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_1
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -46,13 +45,13 @@ services:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db-coord-2:
+    <<: *shared_image
     environment:
       - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_2
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
@@ -67,13 +66,13 @@ services:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db-data-1:
+    <<: *shared_image
     environment:
       - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=data_1
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
@@ -87,13 +86,13 @@ services:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
   db-data-2:
+    <<: *shared_image
     environment:
       - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=data_2
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
@@ -106,13 +105,14 @@ services:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  #-----------------------------------------------------------------------------
+
 volumes:
   db-gtm-1: {}
   db-coord-1: {}
   db-coord-2: {}
   db-data-1: {}
   db-data-2: {}
+
 networks:
   db_a:
     driver: overlay
