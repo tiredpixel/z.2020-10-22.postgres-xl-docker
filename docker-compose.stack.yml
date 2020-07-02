@@ -19,6 +19,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-gtm"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
@@ -40,6 +44,10 @@ services:
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
@@ -61,6 +69,10 @@ services:
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
@@ -81,6 +93,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
@@ -101,6 +117,10 @@ services:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
