@@ -68,7 +68,7 @@ bin/init-eg
 
 ## Clustering (Swarm; Automatically)
 
-If you're running on Docker Swarm, you can use the provided example `docker-compose.swarm.yml` as a starting point, deploying with `docker stack deploy`, along with the init script. Note that the example makes various assumptions, such as that the Swarm node is a manager, that it is tagged with `grp=dbxl`, and that `db_a` has a lower subnet than `db_b` (which might or might not happen automatically; create the networks manually, if you're having trouble).
+If you're running on Docker Swarm, you can use the provided example `docker-compose.stack.yml` as a starting point, deploying with `docker stack deploy`, along with the init script. Note that the example makes various assumptions, such as that the Swarm node is a manager, that it is tagged with `grp=dbxl`, and that `db_a` has a lower subnet than `db_b` (which might or might not happen automatically; create the networks manually, if you're having trouble).
 
 ```sh
 bin/init-eg-swarm STACK_NAME
@@ -78,6 +78,71 @@ Note there are various caveats to using this, which you can read about in detail
 
 - https://github.com/pavouk-0/postgres-xl-docker/issues/27
 - https://github.com/pavouk-0/postgres-xl-docker/pull/28
+
+## Clustering (Kubernetes; Automatically)
+
+Please keep in mind:
+
+1. So as `docker stack` doesn't support `depends_on` option, it may cause errors until GTM node will be loaded.
+2. Scripts below are using `kubectl` to execute commands on the K8s cluster.
+
+```sh
+# TO UP
+docker stack deploy --orchestrator=kubernetes --namespace=default -c docker-compose.stack.yml pxl_stack
+# After you deployed pxl_stack, you need to initialize it (if it didn't do early or you purged PVC)
+./bin/init-eg-stack
+
+# TO DOWN
+docker stack rm --orchestrator=kubernetes pxl_stack
+# Keep in mind that Persistent volumes (PVC) are NOT Docker volumes
+# If you want to purge that, you can to remove !!! ALL !!! PVC 👇
+kubectl delete pvc --all
+# To show all volumes use 👇
+kubectl get pv
+
+# TO PORT FORWARD
+kubectl port-forward <NAME-OF-POD> 5432:5432
+# Also Kubernetes will make port-forwarding. You can find localhost port below 👇
+kubectl get service
+
+# TO GET INFO
+kubectl get all
+# or
+docker stack ps --orchestrator=kubernetes pxl_stack
+
+# TO GET LOGS
+kubectl describe pod db-data-2-0
+kubectl logs db-data-2-0
+
+# TO DEBUG
+kubectl exec db-gtm-1-0 -i -t -- bash -il
+# Where instead ☝️ db-gtm-1-0 may be used db-coord-1-0, db-coord-2-0, db-data-1-0, db-data-2-0
+# If you wanna run psql inside container, I suggest to add /usr/local/lib/postgresql/bin to $PATH var
+PATH=/usr/local/lib/postgresql/bin/:${PATH}
+```
+
+### Pgpool
+
+Also you can add `pgpool` load balacer to the solution. It needs to make base enter point to database cluster and load balansing between coordinators. It sees cordinators nodes. For that:
+
+1. Download `pgpool.conf` from [gist](https://gist.github.com/urpylka/4f3eeb0ec8d93e9f3ba7b700ad2dafe5).
+2. Add these strings below to a `docker-compose` file
+
+    ```docker-compose
+      pgpool:
+        image: smirart/pgpool:latest
+        ports:
+          - "5432:5432"
+        volumes:
+          - ./pgpool.conf:/etc/pgpool/pgpool.conf
+        restart: always
+        networks:
+          - db-b
+    ```
+
+You can build [your own pgpool image](https://github.com/urpylka/docker-pgpool), otherwise use the prebuild image `smirart/pgpool:latest`.
+
+> As pgpool alternativity you can use `HAProxy`.
 
 ## Clustering (Manually)
 
@@ -153,7 +218,7 @@ Pavouk OÜ | [https://www.pavouk.tech/](https://www.pavouk.tech/) | [en@pavouk.t
 
 ## Licence
 
-Copyright © 2016-2019
+Copyright © 2016-2020
 [tiredpixel](https://www.tiredpixel.com/),
 [Pavouk OÜ](https://www.pavouk.tech/),
 and other [contributors](https://github.com/pavouk-0/postgres-xl-docker/graphs/contributors).
