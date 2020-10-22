@@ -1,10 +1,11 @@
 # Postgres-XL Docker
 
-[Postgres-XL Docker](https://github.com/pavouk-0/postgres-xl-docker) is a Docker image source for [Postgres-XL](https://www.postgres-xl.org/), the scalable open-source [PostgreSQL](https://www.postgresql.org/)-based database cluster. The images are based on [Debian](https://www.debian.org/). [Docker images](https://hub.docker.com/r/pavouk0/postgres-xl) are available.
+[Postgres-XL Docker](https://github.com/tiredpixel/postgres-xl-docker) is a container image for [Postgres-XL](https://www.postgres-xl.org/), the scalable open-source [PostgreSQL](https://www.postgresql.org/)-based database cluster.
 
 The images allow for arbitrary database cluster topologies, allowing GTM, GTM Proxy, Coordinator, and Datanode nodes to be created and added as desired. Each service runs in its own container, communicating over a backend network. Coordinator nodes also connect to a frontend network.
 
 Previously, Postgres-XL Docker used `pgxc_ctl` for initialisation and control, running SSH servers as well as database services. This has now been completely redesigned to run database services directly without SSH, initialising using included helper scripts, and allowing full flexibility with regard to cluster topologies. The `pgxc_ctl` binary is no longer included in the image, since the recommended Postgres-XL Docker workflow is to *not* use it.
+
 
 ## Usage
 
@@ -44,6 +45,7 @@ These instructions, along with the provided `docker-compose.yml` file, create:
 
 Other topologies are possible; you likely only need to edit `docker-compose.yml`, potentially setting additional environment variables.
 
+
 ## Build
 
 Clone repository.
@@ -58,6 +60,7 @@ docker-compose up
 
 This will create backend (`db_a`) and frontend (`db_b`) networks.
 
+
 ## Clustering (Automatically)
 
 Prepare an example cluster locally, using the provided example init script. This is not designed for production. Instead, configure by hand using whichever orchestrator you use, or write your own scripts.
@@ -65,6 +68,7 @@ Prepare an example cluster locally, using the provided example init script. This
 ```sh
 bin/init-eg
 ```
+
 
 ## Clustering (Swarm; Automatically)
 
@@ -76,8 +80,9 @@ bin/init-eg-swarm STACK_NAME
 
 Note there are various caveats to using this, which you can read about in detail here:
 
-- https://github.com/pavouk-0/postgres-xl-docker/issues/27
-- https://github.com/pavouk-0/postgres-xl-docker/pull/28
+- https://github.com/tiredpixel/postgres-xl-docker/issues/27
+- https://github.com/tiredpixel/postgres-xl-docker/pull/28
+
 
 ## Clustering (Manually)
 
@@ -119,6 +124,7 @@ View the topologies on each node:
 SELECT * FROM pgxc_node;
 ```
 
+
 ## Testing
 
 Test the cluster using the instructions provided in
@@ -141,20 +147,19 @@ SELECT count(*) FROM repltab;
 SELECT xc_node_id, count(*) FROM repltab GROUP BY xc_node_id;
 ```
 
+
 ## Blessing
 
 May you find peace, and help others to do likewise.
 
+
 ## Contact
 
-We've tried to make this document clear and accessible. If you have any feedback about how we could improve it, or if there's any part of it you'd like to discuss or clarify, we'd love to hear from you. Our contact details are:
+[tiredpixel.com](https://www.tiredpixel.com/) · [tp@tiredpixel.com](mailto:tp@tiredpixel.com)
 
-Pavouk OÜ | [https://www.pavouk.tech/](https://www.pavouk.tech/) | [en@pavouk.tech](mailto:en@pavouk.tech)
+LinkedIn: [in/nic-williams](https://www.linkedin.com/in/nic-williams/) · Twitter: [tiredpixel](https://twitter.com/tiredpixel) · GitHub: [tiredpixel](https://github.com/tiredpixel)
+
 
 ## Licence
 
-Copyright © 2016-2019
-[tiredpixel](https://www.tiredpixel.com/),
-[Pavouk OÜ](https://www.pavouk.tech/),
-and other [contributors](https://github.com/pavouk-0/postgres-xl-docker/graphs/contributors).
-It is free software, released under the MIT licence, and may be redistributed under the terms specified in `LICENSE`.
+Copyright © 2016-2020 [Nic Williams](https://www.tiredpixel.com/), and other [contributors](https://github.com/tiredpixel/postgres-xl-docker/graphs/contributors). It is free software, released under the MIT licence, and may be redistributed under the terms specified in `LICENSE`.
