@@ -5,114 +5,134 @@ x-custom:
     image: pavouk0/postgres-xl:XL_10_R1_1-313-g31dfe47
 
 services:
-  #-----------------------------------------------------------------------------
-  db_gtm_1:
+  db-gtm-1:
+    <<: *shared_image
     environment:
       - PG_HOST=0.0.0.0
       - PG_NODE=gtm_1
       - PG_PORT=6666
-    <<: *shared_image
     command: docker-cmd-gtm
     entrypoint: docker-entrypoint-gtm
     volumes:
-      - db_gtm_1:/var/lib/postgresql
+      - db-gtm-1:/var/lib/postgresql
     networks:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-gtm"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  db_coord_1:
+  db-coord-1:
+    <<: *shared_image
     environment:
-      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_1
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
-      - db_coord_1:/var/lib/postgresql
+      - db-coord-1:/var/lib/postgresql
     networks:
       - db_a
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  db_coord_2:
+  db-coord-2:
+    <<: *shared_image
     environment:
-      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=coord_2
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-coord
     entrypoint: docker-entrypoint-coord
     volumes:
-      - db_coord_2:/var/lib/postgresql
+      - db-coord-2:/var/lib/postgresql
     networks:
       - db_a
       - db_b
     healthcheck:
       test: ["CMD", "docker-healthcheck-coord"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  db_data_1:
+  db-data-1:
+    <<: *shared_image
     environment:
-      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=data_1
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
-      - db_data_1:/var/lib/postgresql
+      - db-data-1:/var/lib/postgresql
     networks:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  db_data_2:
+  db-data-2:
+    <<: *shared_image
     environment:
-      - PG_GTM_HOST=db_gtm_1
+      - PG_GTM_HOST=db-gtm-1
       - PG_GTM_PORT=6666
       - PG_HOST=0.0.0.0
       - PG_NODE=data_2
       - PG_PORT=5432
-    <<: *shared_image
     command: docker-cmd-data
     entrypoint: docker-entrypoint-data
     volumes:
-      - db_data_2:/var/lib/postgresql
+      - db-data-2:/var/lib/postgresql
     networks:
       - db_a
     healthcheck:
       test: ["CMD", "docker-healthcheck-data"]
+      interval: 30s
+      timeout: 30s
+      start_period: 0s
+      retries: 3
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.labels.grp == dbxl # assumes shared volume storage, or 1-node
-  #-----------------------------------------------------------------------------
+
 volumes:
-  db_gtm_1: {}
-  db_coord_1: {}
-  db_coord_2: {}
-  db_data_1: {}
-  db_data_2: {}
+  db-gtm-1: {}
+  db-coord-1: {}
+  db-coord-2: {}
+  db-data-1: {}
+  db-data-2: {}
+
 networks:
   db_a:
     driver: overlay

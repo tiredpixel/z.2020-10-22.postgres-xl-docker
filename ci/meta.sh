@@ -18,7 +18,7 @@ release=$(git describe --abbrev=0)
 if [ "$version" == "$release" ]; then
     release_1=$(echo "$release" | cut -d'.' -f1)
     release_2=$(echo "$release" | cut -d'.' -f2)
-    
+
     # release tagged for completeness, but version same
     echo -n "$release $release_1.$release_2 $release_1 " >> "$meta/tags"
 fi

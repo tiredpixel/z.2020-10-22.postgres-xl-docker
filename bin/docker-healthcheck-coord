@@ -7,18 +7,18 @@ if [ ! -f "$bootstrapped" ]; then
     sleep_int=$(((RANDOM % sleep_int_max) + 1))
     echo "Sleeping to avoid race-condition (!) [$sleep_int s]"
     sleep "$sleep_int"
-    
+
     createuser \
-         -h "${PG_HOST}" \
-         -p "${PG_PORT}" \
+        -h "${PG_HOST}" \
+        -p "${PG_PORT}" \
         "${PG_USER_HEALTHCHECK}" || true
-    
+
     createdb \
-         -h "${PG_HOST}" \
-         -p "${PG_PORT}" \
-         -O "${PG_USER_HEALTHCHECK}" \
+        -h "${PG_HOST}" \
+        -p "${PG_PORT}" \
+        -O "${PG_USER_HEALTHCHECK}" \
         "${PG_USER_HEALTHCHECK}" || true
-    
+
     psql \
         -h "${PG_HOST}" \
         -p "${PG_PORT}" \

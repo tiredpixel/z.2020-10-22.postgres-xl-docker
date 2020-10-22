@@ -1,0 +1,59 @@
+#!/bin/bash -u
+
+nodes=(db-coord-1 db-coord-2 db-data-1 db-data-2)
+#-------------------------------------------------------------------------------
+function log() {
+    local msg="$*"
+
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%S%z'), $msg"
+}
+
+function startup() {
+    log "========================================"
+}
+
+function shutdown() {
+    log "----------------------------------------"
+}
+
+function srv() {
+    local node=$1
+    shift
+
+    kubectl exec "$node" -i -t -- "$@"
+}
+
+function cmd() {
+    local node=$1
+    shift
+
+    log "$@"
+    srv "$node" psql -c "$@"
+}
+
+function get_container() {
+    local node=$1
+
+    id="0"
+    echo "${node}-${id}"
+}
+
+trap shutdown EXIT
+#-------------------------------------------------------------------------------
+startup
+
+for node in "${nodes[@]}"
+do
+    ctnr=$(get_container "$node")
+
+    cmd "$ctnr" "CREATE NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db-coord-1', PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db-coord-2', PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db-data-1',  PORT = 5432);"
+    cmd "$ctnr" "CREATE NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db-data-2',  PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE coord_1 WITH (TYPE = 'coordinator', HOST = 'db-coord-1', PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE coord_2 WITH (TYPE = 'coordinator', HOST = 'db-coord-2', PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE data_1  WITH (TYPE = 'datanode',    HOST = 'db-data-1',  PORT = 5432);"
+    cmd "$ctnr" "ALTER  NODE data_2  WITH (TYPE = 'datanode',    HOST = 'db-data-2',  PORT = 5432);"
+    cmd "$ctnr" "SELECT pgxc_pool_reload();"
+    cmd "$ctnr" "SELECT * FROM pgxc_node;"
+done
